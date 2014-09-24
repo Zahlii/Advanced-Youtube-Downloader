@@ -27,7 +27,7 @@ public class SearchFrame extends JFrame {
 
 	public SearchFrame(String art, String tit, String alb) {
 		super("Enter Additional Metadata to Search For");
-		this.setIconImage(Media.ICON_YTDL.getImage());
+		setIconImage(Media.ICON_DOWNLOAD.getImage());
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

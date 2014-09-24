@@ -90,7 +90,7 @@ public class InfoFrame extends JFrame {
 	
 	private InfoFrame() {
 		super("Edit Audio Information");
-		this.setIconImage(Media.ICON_YTDL.getImage());
+		setIconImage(Media.ICON_DOWNLOAD.getImage());
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

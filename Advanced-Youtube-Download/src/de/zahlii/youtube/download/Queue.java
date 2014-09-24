@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import de.zahlii.youtube.download.step.Step;
-import de.zahlii.youtube.download.ui.DownloadPanel.Stage;
+import de.zahlii.youtube.download.ui.DownloadFrame.Stage;
 
 public class Queue implements ProgressListener {
 	private static Queue instance;

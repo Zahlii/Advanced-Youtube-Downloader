@@ -20,6 +20,7 @@ public class Media {
 	public static final ImageIcon ICON_CANCEL = getImageIcon("icon_cross.png");
 	public static final ImageIcon ICON_YTDL = getImageIcon("icon_YT.png");
 	public static final ImageIcon ICON_OK = getImageIcon("icon_ok.png");
+	public static final ImageIcon ICON_PREF = getImageIcon("icon_pref.png");
 
 	private static ImageIcon getImageIcon(String imageName) {
 		InputStream imagePathName = tryGet(imageName);

@@ -42,7 +42,7 @@ public class ConfigManager {
 				String[] parts = line.split("=");
 				if (parts.length < 2)
 					continue;
-				this.config.put(ConfigKey.valueOf(parts[0]), parts[1]);
+				this.config.put(ConfigKey.valueOf(parts[0]), parts[1].replace("\r", "").replace("\n",""));
 			}
 		} catch (IOException e) {
 			Logging.log("failed loading config file", e);
@@ -94,7 +94,7 @@ public class ConfigManager {
 	}
 
 	public enum ConfigKey {
-		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES
+		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES, IS_DEFAULT
 	}
 
 }

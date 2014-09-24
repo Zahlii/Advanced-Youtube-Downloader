@@ -31,7 +31,7 @@ public class StepRelocate extends Step {
 		
 		
 		
-		String convention = ConfigManager.getInstance().getConfig(ConfigKey.FILENAME_CONVENTION,"%artist - %title").replace("\r", "").replace("\n","");
+		String convention = ConfigManager.getInstance().getConfig(ConfigKey.FILENAME_CONVENTION,"%artist - %title");
 		// %album, %title, %artist, %track, %tracktotal, %year
 		
 		convention = r(convention, "%album" , FieldKey.ALBUM);
@@ -41,7 +41,7 @@ public class StepRelocate extends Step {
 		convention = r(convention, "%tracktotal" , FieldKey.TRACK_TOTAL);
 		convention = r(convention, "%year" , FieldKey.YEAR);
 		
-		String dirPath = ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET,ConfigManager.TEMP_DIR.getAbsolutePath()).replace("\r", "").replace("\n","");
+		String dirPath = ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET,ConfigManager.TEMP_DIR.getAbsolutePath());
 		
 		finalFile = new File(dirPath + ConfigManager.DS + convention + ".mp3");
 
