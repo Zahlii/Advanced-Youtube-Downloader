@@ -22,8 +22,9 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 <img src="http://i.imgur.com/ltTflPU.png" />
 
 # Which Features are planned?
+
 - Supporting MP3Gain / don#t do peak normalization
-- 
+
 # How can I contribute?
 
 It's simple. Just open tickets in the Issue Tracker, or make a pull request when implementing new features.
