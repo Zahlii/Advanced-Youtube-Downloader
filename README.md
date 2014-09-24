@@ -12,7 +12,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 - Relies on FFMPEG.exe and youtube-dl.exe and thus can easily be updated to support new websites and formats.
 - Support single video links as well as different playlists.
 - Automatically removes silence from the videos.
-- Automatically normalizes the audio volume.
+- Automatically normalizes the audio volume (peak normalization, mp3Gain planned)
 - Automatically searches the Gracenote Music DB for song information. The user can then change the information and write it into the file.
 - The album-art is automatically downloaded and included.
 
@@ -20,6 +20,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 <img src="http://i.imgur.com/jr8Epxk.png" />
 <img src="http://i.imgur.com/AiiNced.png" />
 <img src="http://i.imgur.com/ltTflPU.png" />
+<img src="http://i.imgur.com/Sbf3vpu.png" />
 
 # Which Features are planned?
 
