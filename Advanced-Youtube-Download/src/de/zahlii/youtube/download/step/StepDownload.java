@@ -29,7 +29,7 @@ public class StepDownload extends Step {
 						double c = dinf.progress/100.0;
 						double base = (double)(current-1)/(double)total;
 						
-						base += c/(double)total;
+						base += c/total;
 						reportProgress(base);
 					}
 					// [download] Downloading video #1 of 9

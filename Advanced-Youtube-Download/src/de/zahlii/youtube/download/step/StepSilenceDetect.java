@@ -3,8 +3,6 @@ package de.zahlii.youtube.download.step;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.zahlii.youtube.download.QueueEntry;
 import de.zahlii.youtube.download.basic.ConfigManager;
 import de.zahlii.youtube.download.cli.CLI;

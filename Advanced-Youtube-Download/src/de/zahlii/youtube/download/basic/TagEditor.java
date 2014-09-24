@@ -1,7 +1,6 @@
 package de.zahlii.youtube.download.basic;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +21,8 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.KeyNotFoundException;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.id3.valuepair.ImageFormats;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.StandardArtwork;
-import org.jaudiotagger.tag.reference.PictureTypes;
 
 import de.zahlii.youtube.download.QueueEntry;
 

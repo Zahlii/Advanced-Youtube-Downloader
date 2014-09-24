@@ -1,23 +1,19 @@
 package de.zahlii.youtube.download.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JTextField;
-
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -29,10 +25,6 @@ import de.zahlii.youtube.download.Queue;
 import de.zahlii.youtube.download.QueueEntry;
 import de.zahlii.youtube.download.basic.Media;
 import de.zahlii.youtube.download.step.Step;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 
 public class DownloadPanel extends JFrame {
 	private JTextField downloadLinkInput;
@@ -54,6 +46,7 @@ public class DownloadPanel extends JFrame {
 			e.printStackTrace();
 		}
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					DownloadPanel frame = new DownloadPanel();
@@ -70,11 +63,12 @@ public class DownloadPanel extends JFrame {
 			p.setMinimum(0);
 			p.setMaximum(1000);
 			int v = Math.min(1000, (int)(pro*1000));
-			int pr = (int)((double)v/10.0);
+			int pr = (int)(v/10.0);
 			p.setString(pr +"%");
 			p.setValue(v);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					progress(p,pro);
 				}
@@ -99,6 +93,7 @@ public class DownloadPanel extends JFrame {
 			l.setText(t);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					text(l,t);
 				}
@@ -111,6 +106,7 @@ public class DownloadPanel extends JFrame {
 			l.setText(l.getText() + "<br>" + t);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					textNL(l,t);
 				}
@@ -161,6 +157,7 @@ public class DownloadPanel extends JFrame {
 		
 		startDownloadBtn = new JButton("Start Download");
 		startDownloadBtn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Queue.getInstance().addDownload(downloadLinkInput.getText());
 				downloadLinkInput.setText("Enter Download Link");

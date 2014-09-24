@@ -57,7 +57,7 @@ public class Queue implements ProgressListener {
 	}
 	
 	public double getQueueProgress() {
-		return 1 - (double)(queueSizeCurrent)/Math.max(1.0,queueSizeTotal);
+		return 1 - (queueSizeCurrent)/Math.max(1.0,queueSizeTotal);
 	}
 	
 	public void beginQueue() {
