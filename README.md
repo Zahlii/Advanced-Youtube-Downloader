@@ -23,7 +23,14 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 # Which Features are planned?
 
-- Supporting MP3Gain / don#t do peak normalization
+- Supporting MP3Gain / don't do peak normalization
+
+# Used Tools/Libraries
+
+- http://www.jthink.net/jaudiotagger/
+- http://commons.apache.org/
+- http://rg3.github.io/youtube-dl/
+- https://www.ffmpeg.org/
 
 # How can I contribute?
 
