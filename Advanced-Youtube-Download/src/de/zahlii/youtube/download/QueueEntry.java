@@ -1,12 +1,16 @@
 package de.zahlii.youtube.download;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.apache.commons.io.FileUtils;
 
+import de.zahlii.youtube.download.basic.ConfigManager;
+import de.zahlii.youtube.download.basic.ConfigManager.ConfigKey;
+import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.step.Step;
 import de.zahlii.youtube.download.step.StepConvert;
 import de.zahlii.youtube.download.step.StepDownload;
@@ -39,11 +43,13 @@ public class QueueEntry extends Thread {
 	public QueueEntry(File file) {
 		this.downloadTempFile = file;
 		isDownloadTask = false;
-		stepsToComplete.add(new StepSilenceDetect(this));
-		stepsToComplete.add(new StepVolumeAdjust(this));
-		stepsToComplete.add(new StepConvert(this));
-		stepsToComplete.add(new StepMetaSearch(this));
-		stepsToComplete.add(new StepRelocate(this));
+		if(Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.IMPROVE_CONVERT, "true"))) {
+			stepsToComplete.add(new StepSilenceDetect(this));
+			stepsToComplete.add(new StepVolumeAdjust(this));
+			stepsToComplete.add(new StepConvert(this));
+			stepsToComplete.add(new StepMetaSearch(this));
+			stepsToComplete.add(new StepRelocate(this));
+		}
 	}
 	
 	public boolean isDownloadTask() {
@@ -51,12 +57,26 @@ public class QueueEntry extends Thread {
 	}
 	
 	private void cleanUp() {
-		if(!isDownloadTask())
+		if(!isDownloadTask()) {
+			if(Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.KEEP_VIDEO, "false"))) {
+				try {
+					FileUtils.moveFile(getDownloadTempFile(), getDownloadFinalFile());
+				} catch (IOException e) {
+					Logging.log("failed moving video file to destination",e);
+				}
+			}
 			remove(getDownloadTempFile());
+			
+		}
 			
 		remove(getCoverTempFile());
 	}
 	
+	private File getDownloadFinalFile() {
+		String n = getDownloadTempFile().getName();
+		return new File(ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET, (new File("")).getAbsolutePath()) + ConfigManager.DS + n);
+	}
+
 	private void remove(File f) {
 		FileUtils.deleteQuietly(f);
 	}
