@@ -9,19 +9,27 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import org.jaudiotagger.tag.FieldKey;
 
 import radams.gracenote.webapi.GracenoteMetadata;
 import de.zahlii.youtube.download.QueueEntry;
+import de.zahlii.youtube.download.basic.ConfigManager;
+import de.zahlii.youtube.download.basic.ConfigManager.ConfigKey;
 import de.zahlii.youtube.download.basic.Helper;
+import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.basic.Media;
 import de.zahlii.youtube.download.basic.TagEditor;
 
@@ -42,6 +50,7 @@ public class InfoFrame extends JFrame {
 	
 	private TagEditor tagEdit;
 	private QueueEntry e;
+	private JButton btnChoseImage;
 
 	private void fillData(QueueEntry e) {
 
@@ -114,6 +123,23 @@ public class InfoFrame extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);
+		
+		btnRestoreArtwork = new JButton("Restore Artwork");
+		btnRestoreArtwork.setIcon(Media.ICON_CANCEL);
+		btnRestoreArtwork.setEnabled(false);
+		btnRestoreArtwork.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(tempImage != null) {
+					coverPanel.setImage(tempImage);
+					btnRestoreArtwork.setEnabled(false);
+				}
+			}
+		});
+		GridBagConstraints gbc_btnRestoreArtwork = new GridBagConstraints();
+		gbc_btnRestoreArtwork.insets = new Insets(0, 0, 5, 5);
+		gbc_btnRestoreArtwork.gridx = 4;
+		gbc_btnRestoreArtwork.gridy = 0;
+		getContentPane().add(btnRestoreArtwork, gbc_btnRestoreArtwork);
 
 		JLabel lblNewLabel = new JLabel("Artist");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
@@ -331,6 +357,47 @@ public class InfoFrame extends JFrame {
 		gbc_btnNewButton_1.gridx = 3;
 		gbc_btnNewButton_1.gridy = 10;
 		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
+		
+		btnChoseImage = new JButton("Change Artwork");
+		btnChoseImage.setIcon(Media.ICON_SEARCH);
+		btnChoseImage.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				final JFileChooser fc = new JFileChooser();
+				fc.setDialogTitle("Chose Artwork Image");
+				fc.setApproveButtonText("Set Artwork");
+				String path = ConfigManager.getInstance().getConfig(ConfigKey.DIR_IMAGES, (new File("")).getAbsolutePath());
+				fc.setCurrentDirectory(new File(path));
+				fc.setMultiSelectionEnabled(false);
+
+				int res = fc.showOpenDialog(null);
+				if(res == JFileChooser.APPROVE_OPTION) {
+					File f = fc.getSelectedFile();
+					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES, f.getParentFile().getAbsolutePath());
+					reloadCoverImage(f);
+				}
+			}
+			
+		});
+		GridBagConstraints gbc_btnChoseImage = new GridBagConstraints();
+		gbc_btnChoseImage.insets = new Insets(0, 0, 0, 5);
+		gbc_btnChoseImage.gridx = 4;
+		gbc_btnChoseImage.gridy = 10;
+		getContentPane().add(btnChoseImage, gbc_btnChoseImage);
+	}
+	
+	private BufferedImage tempImage;
+	private JButton btnRestoreArtwork;
+	
+	private void reloadCoverImage(File f) {
+		try {
+			tempImage = coverPanel.getImage();
+			coverPanel.setImage(ImageIO.read(f));
+			btnRestoreArtwork.setEnabled(true);
+		} catch (IOException e) {
+			Logging.log("failed to load new artwork from file",e);
+		}
 	}
 	
 	public InfoFrame(QueueEntry e) {

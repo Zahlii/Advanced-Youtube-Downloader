@@ -94,7 +94,7 @@ public class ConfigManager {
 	}
 
 	public enum ConfigKey {
-		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION
+		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES
 	}
 
 }
