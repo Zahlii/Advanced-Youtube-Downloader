@@ -43,7 +43,7 @@ public class SettingsFrame extends JFrame {
 
 			GridBagLayout gbc_main = new GridBagLayout();
 			gbc_main.columnWidths = new int[] {
-					10, 100, 100, 100,100, 10
+					10, 100, 200, 200,100, 10
 			};
 			gbc_main.rowHeights = new int[] {
 					10, 30, 30, 30, 30,30,30, 10
@@ -232,7 +232,11 @@ public class SettingsFrame extends JFrame {
 			
 			spinnerAudioBitrate.setValue(c.getConfig(ConfigKey.AUDIO_BITRATE, "320"));
 			formatPattern.setText(c.getConfig(ConfigKey.FILENAME_CONVENTION, "%artist - %title"));
-			lblDestination.setText(c.getConfig(ConfigKey.DIR_TARGET,(new File("")).getAbsolutePath()));
+			File o = new File("").getAbsoluteFile();
+			while(o.getParentFile() != null) {
+				o = o.getParentFile();
+			}
+			lblDestination.setText(c.getConfig(ConfigKey.DIR_TARGET,o.getAbsolutePath()));
 			chkKeepVideo.setSelected(Boolean.valueOf(c.getConfig(ConfigKey.KEEP_VIDEO, "false")));
 			chkImprove.setSelected(Boolean.valueOf(c.getConfig(ConfigKey.IMPROVE_CONVERT, "true")));
 		}

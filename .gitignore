@@ -3,3 +3,4 @@ bin/
 temp/
 *.bat
 log.txt
+ytload.config
