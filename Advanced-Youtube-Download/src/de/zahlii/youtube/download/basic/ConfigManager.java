@@ -13,9 +13,9 @@ import java.util.Map.Entry;
 
 public class ConfigManager {
 	public static final String DS = File.separator;
+
 	public static final File YOUTUBE_DL = new File("youtube-dl.exe");
 	public static final File FFMPEG = new File("ffmpeg.exe");
-
 	public static final File TEMP_DIR = new File("temp");
 
 	private static ConfigManager instance;

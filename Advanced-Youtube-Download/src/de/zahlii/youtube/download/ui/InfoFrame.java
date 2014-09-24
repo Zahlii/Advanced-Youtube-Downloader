@@ -20,8 +20,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
-
 import org.jaudiotagger.tag.FieldKey;
 
 import radams.gracenote.webapi.GracenoteMetadata;
@@ -128,6 +126,7 @@ public class InfoFrame extends JFrame {
 		btnRestoreArtwork.setIcon(Media.ICON_CANCEL);
 		btnRestoreArtwork.setEnabled(false);
 		btnRestoreArtwork.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(tempImage != null) {
 					coverPanel.setImage(tempImage);

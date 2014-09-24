@@ -46,7 +46,7 @@ public class StepRelocate extends Step {
 		finalFile = new File(dirPath + ConfigManager.DS + convention + ".mp3");
 
 		try {
-			if(finalFile.exists()) {
+			if(finalFile.exists() && !finalFile.equals(entry.getConvertTempFile())) {
 				int answer = JOptionPane.showConfirmDialog(null,
 						"The file "+ finalFile.getAbsolutePath() + " already exists.\nDo you want to overwrite it?",
 						"File exists",
