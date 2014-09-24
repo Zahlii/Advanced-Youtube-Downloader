@@ -103,7 +103,7 @@ public class TagEditor {
 	
 	public void writeField(FieldKey f, String v) {
 		try {
-			tag.setField(f,v);
+			tag.setField(f,v.replace("\\r", "").trim());
 		} catch(KeyNotFoundException | FieldDataInvalidException e) {
 			Logging.log("failed writing field "+ f,e);
 		}
@@ -112,7 +112,7 @@ public class TagEditor {
 	public void writeAllFields(Map<FieldKey,String> fields) {	
 		try {
 			for(Entry<FieldKey,String> e : fields.entrySet()) {
-				tag.setField(e.getKey(), e.getValue());
+				tag.setField(e.getKey(), e.getValue().replace("\\r", "").trim());
 			}
 		} catch(KeyNotFoundException | FieldDataInvalidException e) {
 			Logging.log("failed writing fields",e);

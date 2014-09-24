@@ -29,7 +29,7 @@ public class Helper {
 	public static String sanitize(String main) {
 		return main.replace("<", "").replace(">", "").replace(":", "").replace("/", "")
 				.replace("\\", "").replace("|", "").replace("?", "").replace("*", "")
-				.replace("\"", "");
+				.replace("\"", "").replace("\r","").replace("\n","");
 	}
 	
 	public static BufferedImage downloadImage(String url) {
