@@ -4,6 +4,9 @@ Advanced-Youtube-Downloader
 Why another Youtube downloader? Aren't there enough already?
 Well, there might be. But since none of them fitted my needs, I created this one.
 
+# Where do I get a runnable version?
+Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Downloader/releases.
+
 # Features
 
 - Relies on FFMPEG.exe and youtube-dl.exe and thus can easily be updated to support new websites and formats.
