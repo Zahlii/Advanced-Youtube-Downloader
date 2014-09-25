@@ -9,7 +9,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 # Features
 
-- One-Click download of playlists and videos from mroe than 150 websites.
+- **One-Click download of playlists and videos** from more than **150 websites**.
 - **Removes silent parts** of the video.
 - Can run peak normalization or use **ReplayGain** to adjust the audio volume.
 - **Conversion to MP3** is done automatically.
