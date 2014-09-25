@@ -26,7 +26,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 # Which Features are planned?
 
-- Supporting MP3Gain / don't do peak normalization
+- Supporting conversion to FLAC
 
 # Used Tools/Libraries
 
