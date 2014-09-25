@@ -31,6 +31,7 @@ public class SettingsFrame extends JFrame {
 	private JLabel  lblDestination;
 	private JCheckBox chkKeepVideo;
 	private JCheckBox chkImprove;
+	private JSpinner spinnerVolumeAdjust;
 
 	/**
 	 * Create the frame.
@@ -181,13 +182,33 @@ public class SettingsFrame extends JFrame {
 			gbc_checkBox.gridx = 2;
 			gbc_checkBox.gridy = 5;
 			getContentPane().add(chkImprove, gbc_checkBox);
+			
+			JLabel lblVolumeAdjust = new JLabel("Volume Adjust");
+			GridBagConstraints gbc_lblVolumeAdjust = new GridBagConstraints();
+			gbc_lblVolumeAdjust.anchor = GridBagConstraints.EAST;
+			gbc_lblVolumeAdjust.insets = new Insets(0, 0, 5, 5);
+			gbc_lblVolumeAdjust.gridx = 1;
+			gbc_lblVolumeAdjust.gridy = 6;
+			getContentPane().add(lblVolumeAdjust, gbc_lblVolumeAdjust);
+			
+			spinnerVolumeAdjust = new JSpinner();
+			spinnerVolumeAdjust.setModel(new SpinnerListModel(new String[] {"ReplayGain", "Peak Normalize"}));
+			spinnerVolumeAdjust.setEditor(new JSpinner.DefaultEditor(spinnerVolumeAdjust));
+			
+			GridBagConstraints gbc_spinnerVolumeAdjust = new GridBagConstraints();
+			gbc_spinnerVolumeAdjust.gridwidth = 2;
+			gbc_spinnerVolumeAdjust.fill = GridBagConstraints.BOTH;
+			gbc_spinnerVolumeAdjust.insets = new Insets(0, 0, 5, 5);
+			gbc_spinnerVolumeAdjust.gridx = 2;
+			gbc_spinnerVolumeAdjust.gridy = 6;
+			getContentPane().add(spinnerVolumeAdjust, gbc_spinnerVolumeAdjust);
 			btnNewButton.setIcon(Media.ICON_OK);
 			GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 			gbc_btnNewButton.fill = GridBagConstraints.BOTH;
 			gbc_btnNewButton.anchor = GridBagConstraints.EAST;
 			gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
 			gbc_btnNewButton.gridx = 2;
-			gbc_btnNewButton.gridy = 6;
+			gbc_btnNewButton.gridy = 7;
 			getContentPane().add(btnNewButton, gbc_btnNewButton);
 
 			JButton btnNewButton_1 = new JButton("Cancel");
@@ -203,7 +224,7 @@ public class SettingsFrame extends JFrame {
 			gbc_btnNewButton_1.insets = new Insets(0, 0, 0, 5);
 			gbc_btnNewButton_1.anchor = GridBagConstraints.EAST;
 			gbc_btnNewButton_1.gridx = 3;
-			gbc_btnNewButton_1.gridy = 6;
+			gbc_btnNewButton_1.gridy = 7;
 			getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
 			
 			//reloadConfig();
@@ -217,6 +238,7 @@ public class SettingsFrame extends JFrame {
 			c.setConfig(ConfigKey.IS_DEFAULT,"false");
 			c.setConfig(ConfigKey.KEEP_VIDEO,chkKeepVideo.isSelected()+"");
 			c.setConfig(ConfigKey.IMPROVE_CONVERT,chkImprove.isSelected()+"");
+			c.setConfig(ConfigKey.VOLUME_METHOD, spinnerVolumeAdjust.getValue().toString());
 			setVisible(false);
 		}
 
@@ -231,6 +253,7 @@ public class SettingsFrame extends JFrame {
 			ConfigManager c = ConfigManager.getInstance();
 			
 			spinnerAudioBitrate.setValue(c.getConfig(ConfigKey.AUDIO_BITRATE, "320"));
+			spinnerVolumeAdjust.setValue(c.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain"));
 			formatPattern.setText(c.getConfig(ConfigKey.FILENAME_CONVENTION, "%artist - %title"));
 			File o = new File("").getAbsoluteFile();
 			while(o.getParentFile() != null) {

@@ -57,9 +57,13 @@ public class StepRelocate extends Step {
 				if(answer == JOptionPane.OK_OPTION) {
 					FileUtils.deleteQuietly(finalFile);
 					FileUtils.moveFile(entry.getConvertTempFile(), finalFile);
+					entry.setFinalMP3File(finalFile);
+				} else {
+					//entry.setFinalMP3File(finalFile);
 				}
 			} else {
 				FileUtils.moveFile(entry.getConvertTempFile(), finalFile);
+				entry.setFinalMP3File(finalFile);
 			}
 			
 		} catch (IOException e) {

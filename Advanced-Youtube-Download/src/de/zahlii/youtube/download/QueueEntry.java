@@ -17,12 +17,14 @@ import de.zahlii.youtube.download.step.StepDownload;
 import de.zahlii.youtube.download.step.StepListener;
 import de.zahlii.youtube.download.step.StepMetaSearch;
 import de.zahlii.youtube.download.step.StepRelocate;
+import de.zahlii.youtube.download.step.StepReplayGain;
 import de.zahlii.youtube.download.step.StepSilenceDetect;
 import de.zahlii.youtube.download.step.StepVolumeAdjust;
 
 public class QueueEntry extends Thread {
 	private String webURL;
 	private File downloadTempFile;
+	private File finalMP3File;
 
 	private Step sold;
 	private long told;
@@ -45,10 +47,17 @@ public class QueueEntry extends Thread {
 		isDownloadTask = false;
 		if(Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.IMPROVE_CONVERT, "true"))) {
 			stepsToComplete.add(new StepSilenceDetect(this));
-			stepsToComplete.add(new StepVolumeAdjust(this));
+			if(ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("Peak Normalize"))
+				stepsToComplete.add(new StepVolumeAdjust(this));
+			
 			stepsToComplete.add(new StepConvert(this));
 			stepsToComplete.add(new StepMetaSearch(this));
 			stepsToComplete.add(new StepRelocate(this));
+			
+			String s = ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain");
+			
+			if(ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("ReplayGain"))
+				stepsToComplete.add(new StepReplayGain(this));
 		}
 	}
 	
@@ -174,5 +183,13 @@ public class QueueEntry extends Thread {
 		downloadTempFile = file;
 		QueueEntry q = new QueueEntry(file);
 		Queue.getInstance().addEntry(q);	
+	}
+
+	public File getFinalMP3File() {
+		return finalMP3File;
+	}
+
+	public void setFinalMP3File(File finalMP3File) {
+		this.finalMP3File = finalMP3File;
 	}
 }

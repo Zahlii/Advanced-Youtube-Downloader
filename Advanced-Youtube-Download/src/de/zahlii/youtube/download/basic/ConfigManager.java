@@ -15,6 +15,7 @@ public class ConfigManager {
 	public static final String DS = File.separator;
 
 	public static final File YOUTUBE_DL = new File("youtube-dl.exe");
+	public static final File MP3GAIN = new File("mp3gain.exe");
 	public static final File FFMPEG = new File("ffmpeg.exe");
 	public static final File TEMP_DIR = new File("temp");
 
@@ -94,7 +95,7 @@ public class ConfigManager {
 	}
 
 	public enum ConfigKey {
-		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES, IS_DEFAULT, KEEP_VIDEO, IMPROVE_CONVERT
+		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES, IS_DEFAULT, KEEP_VIDEO, IMPROVE_CONVERT, VOLUME_METHOD
 	}
 
 }
