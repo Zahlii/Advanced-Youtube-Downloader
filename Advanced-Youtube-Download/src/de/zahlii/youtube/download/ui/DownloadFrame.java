@@ -7,10 +7,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -28,6 +31,9 @@ import de.zahlii.youtube.download.basic.ConfigManager.ConfigKey;
 import de.zahlii.youtube.download.basic.Media;
 import de.zahlii.youtube.download.step.Step;
 
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
 public class DownloadFrame extends JFrame {
 	private JTextField downloadLinkInput;
 	private JButton startDownloadBtn;
@@ -37,7 +43,6 @@ public class DownloadFrame extends JFrame {
 	private JProgressBar overallProgressBar;
 	private JLabel lblQueue;
 	private JProgressBar queueProgressBar;
-	private JButton btnSettings;
 	
 	/**
 	 * Launch the application.
@@ -117,6 +122,8 @@ public class DownloadFrame extends JFrame {
 	}
 
 	private SettingsFrame settings;
+	private JMenuBar menuBar;
+	private JMenu mntmFile;
 	
 	/**
 	 * Create the frame.
@@ -144,33 +151,25 @@ public class DownloadFrame extends JFrame {
 		
 		setLocationRelativeTo(null);
 		
-		btnSettings = new JButton("Settings");
-		btnSettings.addActionListener(new ActionListener() {
+		downloadLinkInput = new JTextField("Enter Download Link");
+		downloadLinkInput.addMouseListener(new MouseAdapter() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				openSettings();
-				
+			public void mouseClicked(MouseEvent e) {
+				downloadLinkInput.setText("");
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(downloadLinkInput.getText().equals(""))
+					downloadLinkInput.setText("Enter Download Link");
 			}
 		});
-		btnSettings.setIcon(Media.ICON_PREF);
-		
-		
-		
-		GridBagConstraints gbc_btnSettings = new GridBagConstraints();
-		gbc_btnSettings.fill = GridBagConstraints.BOTH;
-		gbc_btnSettings.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSettings.gridx = 4;
-		gbc_btnSettings.gridy = 1;
-		getContentPane().add(btnSettings, gbc_btnSettings);
-		
-		downloadLinkInput = new JTextField();
-		downloadLinkInput.setText("Enter Download Link");
 		GridBagConstraints gbc_downloadLinkInput = new GridBagConstraints();
 		gbc_downloadLinkInput.insets = new Insets(0, 0, 5, 5);
 		gbc_downloadLinkInput.gridwidth = 3;
 		gbc_downloadLinkInput.fill = GridBagConstraints.BOTH;
 		gbc_downloadLinkInput.gridx = 1;
-		gbc_downloadLinkInput.gridy = 2;
+		gbc_downloadLinkInput.gridy = 1;
 		getContentPane().add(downloadLinkInput, gbc_downloadLinkInput);
 		downloadLinkInput.setColumns(10);
 		
@@ -241,7 +240,7 @@ public class DownloadFrame extends JFrame {
 		gbc_startDownloadBtn.fill = GridBagConstraints.BOTH;
 		gbc_startDownloadBtn.insets = new Insets(0, 0, 5, 5);
 		gbc_startDownloadBtn.gridx = 4;
-		gbc_startDownloadBtn.gridy = 2;
+		gbc_startDownloadBtn.gridy = 1;
 		getContentPane().add(startDownloadBtn, gbc_startDownloadBtn);
 		
 		lblQueue = new JLabel("Queue:");
@@ -249,7 +248,7 @@ public class DownloadFrame extends JFrame {
 		gbc_lblQueue.fill = GridBagConstraints.BOTH;
 		gbc_lblQueue.insets = new Insets(0, 0, 5, 5);
 		gbc_lblQueue.gridx = 1;
-		gbc_lblQueue.gridy = 3;
+		gbc_lblQueue.gridy = 2;
 		getContentPane().add(lblQueue, gbc_lblQueue);
 		
 		queueProgressBar = new JProgressBar();
@@ -259,7 +258,7 @@ public class DownloadFrame extends JFrame {
 		gbc_queueProgressBar.gridwidth = 3;
 		gbc_queueProgressBar.fill = GridBagConstraints.HORIZONTAL;
 		gbc_queueProgressBar.gridx = 2;
-		gbc_queueProgressBar.gridy = 3;
+		gbc_queueProgressBar.gridy = 2;
 		getContentPane().add(queueProgressBar, gbc_queueProgressBar);
 		
 		JLabel lblOverall = new JLabel("Song:");
@@ -267,7 +266,7 @@ public class DownloadFrame extends JFrame {
 		gbc_lblOverall.insets = new Insets(0, 0, 5, 5);
 		gbc_lblOverall.fill = GridBagConstraints.BOTH;
 		gbc_lblOverall.gridx = 1;
-		gbc_lblOverall.gridy = 4;
+		gbc_lblOverall.gridy = 3;
 		getContentPane().add(lblOverall, gbc_lblOverall);
 		
 		overallProgressBar = new JProgressBar();
@@ -277,7 +276,7 @@ public class DownloadFrame extends JFrame {
 		gbc_overallProgressBar.gridwidth = 3;
 		gbc_overallProgressBar.fill = GridBagConstraints.HORIZONTAL;
 		gbc_overallProgressBar.gridx = 2;
-		gbc_overallProgressBar.gridy = 4;
+		gbc_overallProgressBar.gridy = 3;
 		getContentPane().add(overallProgressBar, gbc_overallProgressBar);
 		
 		JLabel lblCurrent = new JLabel("Step:");
@@ -285,7 +284,7 @@ public class DownloadFrame extends JFrame {
 		gbc_lblCurrent.insets = new Insets(0, 0, 5, 5);
 		gbc_lblCurrent.fill = GridBagConstraints.BOTH;
 		gbc_lblCurrent.gridx = 1;
-		gbc_lblCurrent.gridy = 5;
+		gbc_lblCurrent.gridy = 4;
 		getContentPane().add(lblCurrent, gbc_lblCurrent);
 		
 		stepProgressBar = new JProgressBar();
@@ -295,7 +294,7 @@ public class DownloadFrame extends JFrame {
 		gbc_stepProgressBar.gridwidth = 3;
 		gbc_stepProgressBar.fill = GridBagConstraints.HORIZONTAL;
 		gbc_stepProgressBar.gridx = 2;
-		gbc_stepProgressBar.gridy = 5;
+		gbc_stepProgressBar.gridy = 4;
 		getContentPane().add(stepProgressBar, gbc_stepProgressBar);
 		
 		lblLastStep = new JLabel("<html>");
@@ -306,7 +305,7 @@ public class DownloadFrame extends JFrame {
 		gbc_lblLastStep.anchor = GridBagConstraints.WEST;
 		gbc_lblLastStep.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLastStep.gridx = 2;
-		gbc_lblLastStep.gridy = 7;
+		gbc_lblLastStep.gridy = 6;
 		getContentPane().add(lblLastStep, gbc_lblLastStep);
 		
 		lblCurrentStep = new JLabel("");
@@ -316,8 +315,24 @@ public class DownloadFrame extends JFrame {
 		gbc_lblCurrentStep.insets = new Insets(0, 0, 5, 5);
 		gbc_lblCurrentStep.fill = GridBagConstraints.BOTH;
 		gbc_lblCurrentStep.gridx = 2;
-		gbc_lblCurrentStep.gridy = 6;
+		gbc_lblCurrentStep.gridy = 5;
 		getContentPane().add(lblCurrentStep, gbc_lblCurrentStep);
+		
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		mntmFile = new JMenu("File");
+		JMenuItem item = new JMenuItem("Preferences");
+		item.setIcon(Media.ICON_PREF);
+		item.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				openSettings();
+				
+			}
+		});
+		mntmFile.add(item);
+		menuBar.add(mntmFile);
 		
 		setVisible(true);
 		
