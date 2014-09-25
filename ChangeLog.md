@@ -6,6 +6,7 @@
 
 ## Git HEAD
 \+ replay gain is now supported
+
 \+ full FLAC support added, includes downloading, converting, replaygain and tagging
 
 
