@@ -43,7 +43,7 @@ public class StepRelocate extends Step {
 		
 		String dirPath = ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET,ConfigManager.TEMP_DIR.getAbsolutePath());
 		
-		finalFile = new File(dirPath + ConfigManager.DS + convention + ".mp3");
+		finalFile = new File(dirPath + ConfigManager.DS + convention + entry.getExtension());
 
 		try {
 			if(finalFile.exists() && !finalFile.equals(entry.getConvertTempFile())) {

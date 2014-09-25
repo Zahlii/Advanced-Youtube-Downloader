@@ -27,23 +27,34 @@ public class StepReplayGain extends Step {
 			return;
 		}
 		
-		List<String> meta = new ArrayList<String>();
-		meta.add(ConfigManager.MP3GAIN.getAbsolutePath());
-		meta.add("/r");
-		meta.add(f.getAbsolutePath());
-		n.command(meta);
-
-		CLI y = new CLI(n);
-
-		
-		GainProcessAdapter g = new GainProcessAdapter();
-		
-		y.addProcessListener(g);
-		y.run();
-		
-		
-		entry.getStepInfo().put("volume.mp3gain", g.getVolume());
-		
+		if(entry.isFLAC()) {
+			List<String> meta = new ArrayList<String>();
+			meta.add(ConfigManager.METAFLAC.getAbsolutePath());
+			meta.add("--add-replay-gain");
+			meta.add(f.getAbsolutePath());
+			n.command(meta);
+	
+			CLI y = new CLI(n);
+			y.run();			
+			
+			entry.getStepInfo().put("volume.mp3gain", "?");
+		} else {
+			List<String> meta = new ArrayList<String>();
+			meta.add(ConfigManager.MP3GAIN.getAbsolutePath());
+			meta.add("/r");
+			meta.add(f.getAbsolutePath());
+			n.command(meta);
+	
+			CLI y = new CLI(n);
+	
+			
+			GainProcessAdapter g = new GainProcessAdapter();
+			
+			y.addProcessListener(g);
+			y.run();			
+			
+			entry.getStepInfo().put("volume.mp3gain", g.getVolume());
+		}
 		nextStep();
 	}
 
@@ -52,7 +63,7 @@ public class StepReplayGain extends Step {
 		
 		@Override
 		public void processLineOut(String line) {
-			if(line.contains("bytes written")) {
+			if(line.contains("bytes analyzed")) {
 				String p = line.split("%")[0].trim();
 				int prog = Integer.parseInt(p);
 				reportProgress((double)prog/100.0);

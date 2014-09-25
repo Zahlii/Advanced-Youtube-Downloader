@@ -127,8 +127,16 @@ public class QueueEntry extends Thread {
 	public File getConvertTempFile() {
 		String f = downloadTempFile.getAbsolutePath();
 		int i = f.lastIndexOf(".");
-		f = f.substring(0,i) + ".mp3";
+		f = f.substring(0,i) + getExtension();
 		return new File(f);
+	}
+
+	public String getExtension() {
+		 return isFLAC() ? ".flac" : ".mp3";
+	}
+	
+	public boolean isFLAC() {
+		return ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE,"320").equals("FLAC Lossless");
 	}
 
 	public void nextStep() {

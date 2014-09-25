@@ -19,6 +19,8 @@ public class ConfigManager {
 	public static final File FFMPEG = new File("ffmpeg.exe");
 	public static final File TEMP_DIR = new File("temp");
 
+	public static final File METAFLAC = new File("metaflac.exe");
+
 	private static ConfigManager instance;
 
 	private static File configFile = new File("ytload.config");

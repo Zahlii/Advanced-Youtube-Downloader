@@ -65,7 +65,7 @@ public class SettingsFrame extends JFrame {
 			getContentPane().add(lblNewLabel, gbc_lblNewLabel);
 			
 			spinnerAudioBitrate = new JSpinner();	
-			spinnerAudioBitrate.setModel(new SpinnerListModel(new String[] {"128", "192", "320"}));
+			spinnerAudioBitrate.setModel(new SpinnerListModel(new String[] {"128", "192", "320", "FLAC Lossless"}));
 			
 
 			spinnerAudioBitrate.setEditor(new JSpinner.DefaultEditor(spinnerAudioBitrate));

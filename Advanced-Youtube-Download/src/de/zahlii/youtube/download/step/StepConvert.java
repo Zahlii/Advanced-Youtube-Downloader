@@ -23,8 +23,10 @@ public class StepConvert extends Step {
 		meta.add("-i");
 		meta.add(entry.getDownloadTempFile().getAbsolutePath());
 		meta.add("-y");
-		meta.add("-ab");
-		meta.add(ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE,"320")+"k");
+		if(entry.getExtension().equals(".mp3")) {
+			meta.add("-ab");
+			meta.add(ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE,"320")+"k");
+		}
 		
 		if(entry.getStepInfo().containsKey("silence.start") && (boolean)entry.getStepInfo().get("silence.start")) {
 			meta.add("-ss");
