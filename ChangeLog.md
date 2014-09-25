@@ -16,5 +16,5 @@
 
 \+ video file can be kept
 
-\+ convert and improvement  an now be disabled
+\+ convert and improvement can now be disabled
 
