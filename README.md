@@ -13,6 +13,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 - **Removes silent parts** of the video.
 - Can run peak normalization or use **ReplayGain** to adjust the audio volume.
 - **Conversion to MP3** is done automatically.
+- **Conversion to FLAC** fully supported!
 - Retrieves **Meta-Information and Album-Artwork from GracenoteMusicDB**
 - Fully customizable with settings for audio bitrate and naming conventions.
 - Uses external, community-driven products such as ffmpeg, youtube-dl and mp3gain which allows for easy update checking.
@@ -26,7 +27,6 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 # Which Features are planned?
 
-- Supporting conversion to FLAC
 - Adjust audio bitrate depending on input video quality
 
 # Used Tools/Libraries
