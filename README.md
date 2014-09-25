@@ -29,6 +29,11 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 - Adjust audio bitrate depending on input video quality
 
+# License Information
+
+This Software is licensed under the MIT License!
+http://opensource.org/licenses/MIT
+
 # Used Tools/Libraries
 
 - http://www.jthink.net/jaudiotagger/
