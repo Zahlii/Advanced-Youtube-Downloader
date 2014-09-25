@@ -9,13 +9,14 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 
 # Features
 
-- Relies on FFMPEG.exe and youtube-dl.exe and thus can easily be updated to support new websites and formats.
-- Support single video links as well as different playlists.
-- Can also be used as a one-click downloader for youtube videos/playlists
-- Automatically removes silence from the videos.
-- Automatically normalizes the audio volume (peak normalization, mp3Gain planned)
-- Automatically searches the Gracenote Music DB for song information. The user can then change the information and write it into the file.
-- The album-art is automatically downloaded and included.
+- One-Click download of playlists and videos from mroe than 150 websites.
+- **Removes silent parts** of the video.
+- Can run peak normalization or use **ReplayGain** to adjust the audio volume.
+- **Conversion to MP3** is done automatically.
+- Retrieves **Meta-Information and Album-Artwork from GracenoteMusicDB**
+- Fully customizable with settings for audio bitrate and naming conventions.
+- Uses external, community-driven products such as ffmpeg, youtube-dl and mp3gain which allows for easy update checking.
+
 
 # Screenshots
 <img src="http://i.imgur.com/jr8Epxk.png" />
@@ -33,6 +34,7 @@ Head over to the releases page at https://github.com/Zahlii/Advanced-Youtube-Dow
 - http://commons.apache.org/
 - http://rg3.github.io/youtube-dl/
 - https://www.ffmpeg.org/
+- http://mp3gain.sourceforge.net/
 
 # How can I contribute?
 
