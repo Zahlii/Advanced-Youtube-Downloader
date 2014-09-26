@@ -37,6 +37,9 @@ public class ConfigManager {
 		this.loadFile();
 	}
 
+	/**
+	 * Loads the config from the file, creating it if necessary.
+	 */
 	private void loadFile() {
 
 		try {
@@ -60,6 +63,9 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Writes all settings out of the HashMap into the file.
+	 */
 	private void writeFile() {
 
 		try {
@@ -84,6 +90,14 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Set a config entry.
+	 * 
+	 * @param key
+	 *            ConfigKey to set
+	 * @param value
+	 *            Value it should take
+	 */
 	public void setConfig(final ConfigKey key, final String value) {
 		this.config.put(key, value);
 		this.writeFile();
@@ -97,6 +111,16 @@ public class ConfigManager {
 		return instance;
 	}
 
+	/**
+	 * Get a config entry or the default value. Please note: When the entry does
+	 * not exist, it will be saved to the default value in the config file.
+	 * 
+	 * @param key
+	 *            the ConfigKey to get
+	 * @param def
+	 *            the default value
+	 * @return default value or setting
+	 */
 	public String getConfig(final ConfigKey key, final String def) {
 		if (!this.config.containsKey(key)) {
 			this.setConfig(key, def);
