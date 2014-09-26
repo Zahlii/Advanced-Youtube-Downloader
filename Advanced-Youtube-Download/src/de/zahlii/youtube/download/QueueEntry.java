@@ -28,62 +28,72 @@ public class QueueEntry extends Thread {
 
 	private Step sold;
 	private long told;
-	
+
 	private int totalSteps = 0;
-	
+
 	private HashMap<String, Object> stepInfo = new HashMap<>();
 	private ArrayList<ProgressListener> progressListeners = new ArrayList<>();
 	private LinkedList<Step> stepsToComplete = new LinkedList<>();
-	
+
 	private boolean isDownloadTask = true;
-	
+
 	public QueueEntry(String webURL) {
 		this.webURL = webURL;
 		stepsToComplete.add(new StepDownload(this));
 	}
-	
+
 	public QueueEntry(File file) {
 		this.downloadTempFile = file;
 		isDownloadTask = false;
-		if(Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.IMPROVE_CONVERT, "true"))) {
+		if (Boolean.valueOf(ConfigManager.getInstance().getConfig(
+				ConfigKey.IMPROVE_CONVERT, "true"))) {
 			stepsToComplete.add(new StepSilenceDetect(this));
-			if(ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("Peak Normalize"))
+			if (ConfigManager.getInstance()
+					.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+					.equals("Peak Normalize"))
 				stepsToComplete.add(new StepVolumeAdjust(this));
-			
+
 			stepsToComplete.add(new StepConvert(this));
 			stepsToComplete.add(new StepMetaSearch(this));
 			stepsToComplete.add(new StepRelocate(this));
-			
-			String s = ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain");
-			
-			if(ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("ReplayGain"))
+
+			String s = ConfigManager.getInstance().getConfig(
+					ConfigKey.VOLUME_METHOD, "ReplayGain");
+
+			if (ConfigManager.getInstance()
+					.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+					.equals("ReplayGain"))
 				stepsToComplete.add(new StepReplayGain(this));
 		}
 	}
-	
+
 	public boolean isDownloadTask() {
 		return isDownloadTask;
 	}
-	
+
 	private void cleanUp() {
-		if(!isDownloadTask()) {
-			if(Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.KEEP_VIDEO, "false"))) {
+		if (!isDownloadTask()) {
+			if (Boolean.valueOf(ConfigManager.getInstance().getConfig(
+					ConfigKey.KEEP_VIDEO, "false"))) {
 				try {
-					FileUtils.moveFile(getDownloadTempFile(), getDownloadFinalFile());
+					FileUtils.moveFile(getDownloadTempFile(),
+							getDownloadFinalFile());
 				} catch (IOException e) {
-					Logging.log("failed moving video file to destination",e);
+					Logging.log("failed moving video file to destination", e);
 				}
 			}
 			remove(getDownloadTempFile());
-			
+
 		}
-			
+
 		remove(getCoverTempFile());
 	}
-	
+
 	private File getDownloadFinalFile() {
 		String n = getDownloadTempFile().getName();
-		return new File(ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET, (new File("")).getAbsolutePath()) + ConfigManager.DS + n);
+		return new File(ConfigManager.getInstance().getConfig(
+				ConfigKey.DIR_TARGET, (new File("")).getAbsolutePath())
+				+ ConfigManager.DS + n);
 	}
 
 	private void remove(File f) {
@@ -92,24 +102,23 @@ public class QueueEntry extends Thread {
 
 	public String getWebURL() {
 		return webURL;
-	}	
-	
-	
+	}
+
 	public void addListener(ProgressListener l) {
 		progressListeners.add(l);
 	}
-	
+
 	public void removeListener(ProgressListener l) {
 		progressListeners.remove(l);
 	}
-	
-	public HashMap<String,Object> getStepInfo() {
+
+	public HashMap<String, Object> getStepInfo() {
 		return stepInfo;
 	}
 
 	@Override
 	public void run() {
-		for(ProgressListener l : progressListeners) {
+		for (ProgressListener l : progressListeners) {
 			l.onEntryBegin(this);
 		}
 		totalSteps = stepsToComplete.size();
@@ -121,76 +130,79 @@ public class QueueEntry extends Thread {
 	}
 
 	public void setDownloadTempFile(File file) {
-		downloadTempFile = file;		
+		downloadTempFile = file;
 	}
 
 	public File getConvertTempFile() {
 		String f = downloadTempFile.getAbsolutePath();
 		int i = f.lastIndexOf(".");
-		f = f.substring(0,i) + getExtension();
+		f = f.substring(0, i) + getExtension();
 		return new File(f);
 	}
 
 	public String getExtension() {
-		 return isFLAC() ? ".flac" : ".mp3";
+		return isFLAC() ? ".flac" : ".mp3";
 	}
-	
+
 	public boolean isFLAC() {
-		return ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE,"320").equals("FLAC Lossless");
+		return ConfigManager.getInstance()
+				.getConfig(ConfigKey.AUDIO_BITRATE, "320")
+				.equals("FLAC Lossless");
 	}
 
 	public void nextStep() {
-		if(sold != null) {
-			long t = System.currentTimeMillis()-told;
-			
-			double progress = 1 - (double)stepsToComplete.size()/(double)totalSteps;
-			
-			for(ProgressListener l : progressListeners) {
+		if (sold != null) {
+			long t = System.currentTimeMillis() - told;
+
+			double progress = 1 - (double) stepsToComplete.size()
+					/ (double) totalSteps;
+
+			for (ProgressListener l : progressListeners) {
 				l.onEntryStepProgress(this, sold, 1);
 				l.onEntryStepEnd(this, sold, t, progress);
-			}	
+			}
 		}
-		
-		final QueueEntry that = this;		
-		
-		if(stepsToComplete.isEmpty()) {
-			for(ProgressListener l : progressListeners) {
+
+		final QueueEntry that = this;
+
+		if (stepsToComplete.isEmpty()) {
+			for (ProgressListener l : progressListeners) {
 				l.onEntryEnd(this);
 			}
 			cleanUp();
 			return;
 		}
-		
+
 		final Step s = stepsToComplete.removeFirst();
 		sold = s;
 		told = System.currentTimeMillis();
-		
-		for(ProgressListener l : progressListeners) {
+
+		for (ProgressListener l : progressListeners) {
 			l.onEntryStepBegin(this, s);
 			l.onEntryStepProgress(that, s, 0);
 		}
 		s.addListener(new StepListener() {
 			@Override
 			public void stepProgress(double progress) {
-				for(ProgressListener l : progressListeners) {
+				for (ProgressListener l : progressListeners) {
 					l.onEntryStepProgress(that, s, progress);
 				}
-			}				
+			}
 		});
-		s.doStep();		
+		s.doStep();
 	}
 
 	public File getCoverTempFile() {
 		String f = downloadTempFile.getAbsolutePath();
 		int i = f.lastIndexOf(".");
-		f = f.substring(0,i) + ".png";
+		f = f.substring(0, i) + ".png";
 		return new File(f);
 	}
 
 	public void addDownloadTempFile(File file) {
 		downloadTempFile = file;
 		QueueEntry q = new QueueEntry(file);
-		Queue.getInstance().addEntry(q);	
+		Queue.getInstance().addEntry(q);
 	}
 
 	public File getFinalMP3File() {

@@ -10,7 +10,6 @@ import java.util.List;
 
 import de.zahlii.youtube.download.basic.Logging;
 
-
 public class CLI {
 
 	private BufferedReader in;
@@ -30,7 +29,8 @@ public class CLI {
 			b.redirectErrorStream(true);
 			p = b.start();
 			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			out = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+			out = new BufferedWriter(
+					new OutputStreamWriter(p.getOutputStream()));
 
 			while (processInLine()) {
 

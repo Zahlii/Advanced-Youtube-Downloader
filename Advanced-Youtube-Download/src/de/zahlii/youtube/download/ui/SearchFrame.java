@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 
 import de.zahlii.youtube.download.basic.Media;
 
-
 public class SearchFrame extends JFrame {
 	private JTextField artist;
 	private JTextField title;
@@ -41,18 +40,13 @@ public class SearchFrame extends JFrame {
 		listeners = new ArrayList<ActionListener>();
 
 		GridBagLayout gbc_main = new GridBagLayout();
-		gbc_main.columnWeights = new double[] {
-				0.0, 0.0, 0.0, 0.0
-		};
-		gbc_main.columnWidths = new int[] {
-				10, 100, 100, 100, 10
-		};
-		gbc_main.rowHeights = new int[] {
-				10, 30, 30, 30, 30, 10
-		};
+		gbc_main.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
+		gbc_main.columnWidths = new int[] { 10, 100, 100, 100, 10 };
+		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 10 };
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
+				sum(gbc_main.rowHeights)));
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);

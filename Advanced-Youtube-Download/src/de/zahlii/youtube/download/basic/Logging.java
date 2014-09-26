@@ -37,8 +37,9 @@ public class Logging {
 		String cls = s.getClassName();
 		String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")",
-				35);
+		String red = padRight(
+				shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
+						+ ")", 35);
 
 		String msg = getTimeStamp() + " - [@ " + red + "] " + message;
 		System.err.println(msg);
@@ -79,10 +80,11 @@ public class Logging {
 		String cls = s.getClassName();
 		String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")",
-				35);
-		log(message + "[ " + e.getClass().getSimpleName() + " - " + e.getMessage() + " ] from "
-				+ red);
+		String red = padRight(
+				shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
+						+ ")", 35);
+		log(message + "[ " + e.getClass().getSimpleName() + " - "
+				+ e.getMessage() + " ] from " + red);
 
 		if (!printStackTrace) {
 			return;
@@ -121,12 +123,13 @@ public class Logging {
 	 * @return
 	 */
 	public static String getPathName() {
-		File f = new File(Logging.class.getProtectionDomain().getCodeSource().getLocation()
-				.getPath());
+		File f = new File(Logging.class.getProtectionDomain().getCodeSource()
+				.getLocation().getPath());
 
 		String sep = System.getProperty("file.separator");
 
-		if (f.getAbsolutePath().contains(sep + "bin") || f.getAbsolutePath().contains(".jar")) {
+		if (f.getAbsolutePath().contains(sep + "bin")
+				|| f.getAbsolutePath().contains(".jar")) {
 			f = f.getParentFile();
 		}
 
@@ -151,7 +154,8 @@ public class Logging {
 	private static void appendString(String file, String text) {
 		String f = getPathName() + "/" + file;
 
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(
+				new FileWriter(f, true)))) {
 			out.println(text);
 		} catch (IOException e) {
 			Logging.log("failed writing into " + f, e);
@@ -170,7 +174,8 @@ public class Logging {
 	private static void appendException(String file, Exception e) {
 		String f = getPathName() + "/" + file;
 
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(
+				new FileWriter(f, true)))) {
 			e.printStackTrace(out);
 		} catch (IOException e1) {
 			Logging.log("failed writing into " + f, e);

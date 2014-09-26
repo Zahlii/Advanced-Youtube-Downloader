@@ -31,7 +31,6 @@ import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.basic.Media;
 import de.zahlii.youtube.download.basic.TagEditor;
 
-
 public class InfoFrame extends JFrame {
 	private JTextField artist;
 	private JTextField title;
@@ -45,7 +44,7 @@ public class InfoFrame extends JFrame {
 	private JTextField tempo;
 	private JTextField mood;
 	private CoverPanel coverPanel;
-	
+
 	private TagEditor tagEdit;
 	private QueueEntry e;
 	private JButton btnChoseImage;
@@ -64,12 +63,12 @@ public class InfoFrame extends JFrame {
 		track.setText(tagEdit.readField(FieldKey.TRACK));
 		trackCount.setText(tagEdit.readField(FieldKey.TRACK_TOTAL));
 	}
-	
+
 	private void fillData(GracenoteMetadata d) {
 		try {
 			String art = d.getAlbum(0).get("album_coverart").toString();
 			coverPanel.setImage(Helper.downloadImage(art));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			coverPanel.setImage(null);
 		}
 		artist.setText(d.getArtist());
@@ -83,11 +82,11 @@ public class InfoFrame extends JFrame {
 		track.setText(d.getString("track_number"));
 		trackCount.setText(d.getString("track_count"));
 	}
-	
+
 	public TagEditor getTagEditor() {
 		return tagEdit;
 	}
-	
+
 	private InfoFrame() {
 		super("Edit Audio Information");
 		setIconImage(Media.ICON_DOWNLOAD.getImage());
@@ -100,35 +99,29 @@ public class InfoFrame extends JFrame {
 				setVisible(false);
 			}
 		});
-		
-		
 
 		listeners = new ArrayList<ActionListener>();
 
 		GridBagLayout gbc_main = new GridBagLayout();
-		gbc_main.columnWeights = new double[] {
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-		};
-		gbc_main.columnWidths = new int[] {
-				10, 100, 100, 100, 270, 10
-		};
-		gbc_main.rowHeights = new int[] {
-				10, 30, 30, 30, 30, 30, 30, 30, 30, 30, 10
-		};
+		gbc_main.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+		gbc_main.columnWidths = new int[] { 10, 100, 100, 100, 270, 10 };
+		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 30, 30, 30, 30,
+				30, 10 };
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
+				sum(gbc_main.rowHeights)));
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);
-		
+
 		btnRestoreArtwork = new JButton("Restore Artwork");
 		btnRestoreArtwork.setIcon(Media.ICON_CANCEL);
 		btnRestoreArtwork.setEnabled(false);
 		btnRestoreArtwork.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(tempImage != null) {
+				if (tempImage != null) {
 					coverPanel.setImage(tempImage);
 					btnRestoreArtwork.setEnabled(false);
 				}
@@ -356,7 +349,7 @@ public class InfoFrame extends JFrame {
 		gbc_btnNewButton_1.gridx = 3;
 		gbc_btnNewButton_1.gridy = 10;
 		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
-		
+
 		btnChoseImage = new JButton("Change Artwork");
 		btnChoseImage.setIcon(Media.ICON_SEARCH);
 		btnChoseImage.addActionListener(new ActionListener() {
@@ -366,18 +359,20 @@ public class InfoFrame extends JFrame {
 				final JFileChooser fc = new JFileChooser();
 				fc.setDialogTitle("Chose Artwork Image");
 				fc.setApproveButtonText("Set Artwork");
-				String path = ConfigManager.getInstance().getConfig(ConfigKey.DIR_IMAGES, (new File("")).getAbsolutePath());
+				String path = ConfigManager.getInstance().getConfig(
+						ConfigKey.DIR_IMAGES, (new File("")).getAbsolutePath());
 				fc.setCurrentDirectory(new File(path));
 				fc.setMultiSelectionEnabled(false);
 
 				int res = fc.showOpenDialog(null);
-				if(res == JFileChooser.APPROVE_OPTION) {
+				if (res == JFileChooser.APPROVE_OPTION) {
 					File f = fc.getSelectedFile();
-					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES, f.getParentFile().getAbsolutePath());
+					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES,
+							f.getParentFile().getAbsolutePath());
 					reloadCoverImage(f);
 				}
 			}
-			
+
 		});
 		GridBagConstraints gbc_btnChoseImage = new GridBagConstraints();
 		gbc_btnChoseImage.insets = new Insets(0, 0, 0, 5);
@@ -385,35 +380,38 @@ public class InfoFrame extends JFrame {
 		gbc_btnChoseImage.gridy = 10;
 		getContentPane().add(btnChoseImage, gbc_btnChoseImage);
 	}
-	
+
 	private BufferedImage tempImage;
 	private JButton btnRestoreArtwork;
-	
+
 	private void reloadCoverImage(File f) {
 		try {
 			tempImage = coverPanel.getImage();
 			coverPanel.setImage(ImageIO.read(f));
 			btnRestoreArtwork.setEnabled(true);
 		} catch (IOException e) {
-			Logging.log("failed to load new artwork from file",e);
+			Logging.log("failed to load new artwork from file", e);
 		}
 	}
-	
+
 	public InfoFrame(QueueEntry e) {
 		this();
 		this.e = e;
-		tagEdit = new TagEditor(e.getConvertTempFile() != null ? e.getConvertTempFile() : e.getDownloadTempFile(),e);
+		tagEdit = new TagEditor(
+				e.getConvertTempFile() != null ? e.getConvertTempFile()
+						: e.getDownloadTempFile(), e);
 		fillData(e);
 	}
-	
+
 	public InfoFrame(QueueEntry e, GracenoteMetadata d) {
 		this();
 		this.e = e;
-		tagEdit = new TagEditor(e.getConvertTempFile() != null ? e.getConvertTempFile() : e.getDownloadTempFile(),e);
+		tagEdit = new TagEditor(
+				e.getConvertTempFile() != null ? e.getConvertTempFile()
+						: e.getDownloadTempFile(), e);
 		fillData(d);
 	}
 
-	
 	public void addActionListener(ActionListener a) {
 		this.listeners.add(a);
 	}

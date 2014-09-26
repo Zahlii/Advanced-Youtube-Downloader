@@ -9,8 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-
+/**
+ * This class is used for storing and retrieving the Config entries. Every entry
+ * is associated with exactly one ConfigKey.
+ * 
+ * @author Zahlii
+ * 
+ */
 public class ConfigManager {
 	public static final String DS = File.separator;
 
@@ -18,7 +23,6 @@ public class ConfigManager {
 	public static final File MP3GAIN = new File("mp3gain.exe");
 	public static final File FFMPEG = new File("ffmpeg.exe");
 	public static final File TEMP_DIR = new File("temp");
-
 	public static final File METAFLAC = new File("metaflac.exe");
 
 	private static ConfigManager instance;
@@ -26,28 +30,32 @@ public class ConfigManager {
 	private static File configFile = new File("ytload.config");
 	private static String encoding = "UTF-8";
 
-	private Map<ConfigKey, String> config;
+	private final Map<ConfigKey, String> config;
 
 	private ConfigManager() {
 		this.config = new HashMap<ConfigKey, String>();
-		loadFile();
+		this.loadFile();
 	}
 
 	private void loadFile() {
 
 		try {
-			if (!configFile.exists())
+			if (!configFile.exists()) {
 				configFile.createNewFile();
-
-			byte[] encoded = Files.readAllBytes(Paths.get(configFile.toURI()));
-			String[] lines = new String(encoded, encoding).split("\n");
-			for (String line : lines) {
-				String[] parts = line.split("=");
-				if (parts.length < 2)
-					continue;
-				this.config.put(ConfigKey.valueOf(parts[0]), parts[1].replace("\r", "").replace("\n",""));
 			}
-		} catch (IOException e) {
+
+			final byte[] encoded = Files.readAllBytes(Paths.get(configFile
+					.toURI()));
+			final String[] lines = new String(encoded, encoding).split("\n");
+			for (final String line : lines) {
+				final String[] parts = line.split("=");
+				if (parts.length < 2) {
+					continue;
+				}
+				this.config.put(ConfigKey.valueOf(parts[0]),
+						parts[1].replace("\r", "").replace("\n", ""));
+			}
+		} catch (final IOException e) {
 			Logging.log("failed loading config file", e);
 		}
 	}
@@ -55,45 +63,46 @@ public class ConfigManager {
 	private void writeFile() {
 
 		try {
-			if (!configFile.exists())
+			if (!configFile.exists()) {
 				configFile.createNewFile();
+			}
 
-			StringBuilder sb = new StringBuilder();
-			for (Entry<ConfigKey, String> e : this.config.entrySet()) {
+			final StringBuilder sb = new StringBuilder();
+			for (final Entry<ConfigKey, String> e : this.config.entrySet()) {
 				sb.append(e.getKey());
 				sb.append("=");
 				sb.append(e.getValue());
 				sb.append("\n");
 			}
 
-			FileWriter f2 = new FileWriter(configFile, false);
+			final FileWriter f2 = new FileWriter(configFile, false);
 			f2.write(sb.toString());
 			f2.close();
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Logging.log("failed writing config file", e);
 		}
 	}
 
-	public void setConfig(ConfigKey key, String value) {
+	public void setConfig(final ConfigKey key, final String value) {
 		this.config.put(key, value);
-		writeFile();
+		this.writeFile();
 	}
 
 	public static ConfigManager getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new ConfigManager();
+		}
 
 		return instance;
 	}
 
-	public String getConfig(ConfigKey key, String def) {
-		if(!this.config.containsKey(key)) {
-			setConfig(key,def);
+	public String getConfig(final ConfigKey key, final String def) {
+		if (!this.config.containsKey(key)) {
+			this.setConfig(key, def);
 			return def;
-		} else {
+		} else
 			return this.config.get(key);
-		}
 	}
 
 	public enum ConfigKey {

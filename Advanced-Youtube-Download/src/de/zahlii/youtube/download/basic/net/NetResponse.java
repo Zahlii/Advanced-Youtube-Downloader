@@ -83,8 +83,10 @@ public class NetResponse {
 	 * @param string
 	 * @return
 	 */
-	public static List<String> rextract(String data, String string, boolean dotall) {
-		Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL) : Pattern.compile(string);
+	public static List<String> rextract(String data, String string,
+			boolean dotall) {
+		Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL) : Pattern
+				.compile(string);
 		Matcher m = p.matcher(data);
 		List<String> ret = new ArrayList<String>();
 

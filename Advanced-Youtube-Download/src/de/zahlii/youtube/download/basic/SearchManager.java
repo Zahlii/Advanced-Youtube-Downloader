@@ -7,14 +7,14 @@ import radams.gracenote.webapi.GracenoteException;
 import radams.gracenote.webapi.GracenoteMetadata;
 import radams.gracenote.webapi.GracenoteWebAPI;
 
-
 public class SearchManager {
 	private static SearchManager instance;
 	private GracenoteWebAPI api;
 
 	private SearchManager() {
 		try {
-			api = new GracenoteWebAPI("10483968", "4EA6AAF67950AC0A07567F7195D7405B",
+			api = new GracenoteWebAPI("10483968",
+					"4EA6AAF67950AC0A07567F7195D7405B",
 					"264115384938188959-9606FB329A8E8D0ECF20D5E0C1BF71B0");
 		} catch (GracenoteException e) {
 			Logging.log("failed connecting to gracenote API", e);
@@ -49,7 +49,8 @@ public class SearchManager {
 		return trim.trim();
 	}
 
-	public GracenoteMetadata searchForSong(String artist, String album, String title) {
+	public GracenoteMetadata searchForSong(String artist, String album,
+			String title) {
 		artist = _niceName(artist);
 		album = _niceName(album);
 		title = _niceName(title);

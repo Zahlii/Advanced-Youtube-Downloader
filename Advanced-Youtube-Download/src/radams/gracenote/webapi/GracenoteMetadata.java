@@ -11,7 +11,6 @@ import org.w3c.dom.NodeList;
 import de.zahlii.youtube.download.basic.Levenshtein;
 import de.zahlii.youtube.download.basic.Logging;
 
-
 public class GracenoteMetadata {
 	// Members
 	private ArrayList<Map<String, Object>> _data = new ArrayList<Map<String, Object>>();
@@ -30,7 +29,8 @@ public class GracenoteMetadata {
 			// If there's no GOET data, do a fetch to get the full information
 			// instead.
 			if (this._getTextValue(e, "ARTIST_ORIGIN") == null) {
-				xml = api.fetchAlbumWithoutParsing(this._getTextValue(e, "GN_ID"));
+				xml = api.fetchAlbumWithoutParsing(this._getTextValue(e,
+						"GN_ID"));
 				if (xml == null) {
 					Logging.log("[GRACE]\tno gracenote match");
 					return;
@@ -45,37 +45,46 @@ public class GracenoteMetadata {
 			albumData.put("album_year", this._getTextValue(e, "DATE"));
 			albumData.put("genre", this._getOETData(e, "GENRE"));
 			albumData.put("track_count", this._getTextValue(e, "TRACK_COUNT"));
-			albumData.put("album_coverart", this._getAttribElement(e, "URL", "TYPE", "COVERART"));
+			albumData.put("album_coverart",
+					this._getAttribElement(e, "URL", "TYPE", "COVERART"));
 
 			// Artist metadata
 			albumData.put("artist_image_url",
 					this._getAttribElement(e, "URL", "TYPE", "ARTIST_IMAGE"));
-			albumData.put("artist_bio_url",
-					this._getAttribElement(e, "URL", "TYPE", "ARTIST_BIOGRAPHY"));
-			albumData.put("review_url", this._getAttribElement(e, "URL", "TYPE", "ARTIST_REVIEW"));
+			albumData.put("artist_bio_url", this._getAttribElement(e, "URL",
+					"TYPE", "ARTIST_BIOGRAPHY"));
+			albumData.put("review_url",
+					this._getAttribElement(e, "URL", "TYPE", "ARTIST_REVIEW"));
 
 			// Artist OET metadata
 			albumData.put("artist_era", this._getOETData(e, "ARTIST_ERA"));
 			albumData.put("artist_type", this._getOETData(e, "ARTIST_TYPE"));
-			albumData.put("artist_origin", this._getOETData(e, "ARTIST_ORIGIN"));
+			albumData
+					.put("artist_origin", this._getOETData(e, "ARTIST_ORIGIN"));
 
 			int trackCount = e.getElementsByTagName("TRACK").getLength();
 
 			// Parse track metadata if there is any.
 			for (int j = 0; j < trackCount; j++) {
-				Element trackElement = (Element) e.getElementsByTagName("TRACK").item(j);
+				Element trackElement = (Element) e
+						.getElementsByTagName("TRACK").item(j);
 
 				String title = this._getTextValue(trackElement, "TITLE");
 				String search = api.getSearchedTrack();
-				boolean success = title.contains(search) || search.contains(title)
-						|| Levenshtein.distance(search, title) <= 0.1 * title.length();
+				boolean success = title.contains(search)
+						|| search.contains(title)
+						|| Levenshtein.distance(search, title) <= 0.1 * title
+								.length();
 				if (!success)
 					continue;
 
-				albumData.put("track_number", this._getTextValue(trackElement, "TRACK_NUM"));
-				albumData.put("track_gn_id", this._getTextValue(trackElement, "GN_ID"));
+				albumData.put("track_number",
+						this._getTextValue(trackElement, "TRACK_NUM"));
+				albumData.put("track_gn_id",
+						this._getTextValue(trackElement, "GN_ID"));
 				albumData.put("track_title", title);
-				albumData.put("track_artist_name", this._getTextValue(trackElement, "ARTIST"));
+				albumData.put("track_artist_name",
+						this._getTextValue(trackElement, "ARTIST"));
 
 				albumData.put("mood", this._getOETData(trackElement, "MOOD"));
 				albumData.put("tempo", this._getOETData(trackElement, "TEMPO"));
@@ -83,16 +92,22 @@ public class GracenoteMetadata {
 				// If track level GOET data exists, overwrite metadata from
 				// album.
 				if (trackElement.getElementsByTagName("GENRE").getLength() > 0) {
-					albumData.put("genre", this._getOETData(trackElement, "GENRE"));
+					albumData.put("genre",
+							this._getOETData(trackElement, "GENRE"));
 				}
 				if (trackElement.getElementsByTagName("ARTIST_ERA").getLength() > 0) {
-					albumData.put("artist_era", this._getOETData(trackElement, "ARTIST_ERA"));
+					albumData.put("artist_era",
+							this._getOETData(trackElement, "ARTIST_ERA"));
 				}
-				if (trackElement.getElementsByTagName("ARTIST_TYPE").getLength() > 0) {
-					albumData.put("artist_type", this._getOETData(trackElement, "ARTIST_TYPE"));
+				if (trackElement.getElementsByTagName("ARTIST_TYPE")
+						.getLength() > 0) {
+					albumData.put("artist_type",
+							this._getOETData(trackElement, "ARTIST_TYPE"));
 				}
-				if (trackElement.getElementsByTagName("ARTIST_ORIGIN").getLength() > 0) {
-					albumData.put("artist_origin", this._getOETData(trackElement, "ARTIST_ORIGIN"));
+				if (trackElement.getElementsByTagName("ARTIST_ORIGIN")
+						.getLength() > 0) {
+					albumData.put("artist_origin",
+							this._getOETData(trackElement, "ARTIST_ORIGIN"));
 				}
 				break;
 			}
@@ -117,7 +132,8 @@ public class GracenoteMetadata {
 	// //////////////////////////////////////////////////////////////////////////////////////////////
 	// Helpers
 
-	private String _getAttribElement(Element root, String nodeName, String attribute, String value) {
+	private String _getAttribElement(Element root, String nodeName,
+			String attribute, String value) {
 		NodeList nl = root.getElementsByTagName(nodeName);
 		for (int i = 0; i < nl.getLength(); i++) {
 			Element e = (Element) nl.item(i);
@@ -130,14 +146,15 @@ public class GracenoteMetadata {
 		return null;
 	}
 
-	private ArrayList<GracenoteMetadataOET> _getOETData(Element root, String name) {
+	private ArrayList<GracenoteMetadataOET> _getOETData(Element root,
+			String name) {
 		ArrayList<GracenoteMetadataOET> al = new ArrayList<GracenoteMetadataOET>();
 
 		NodeList nl = root.getElementsByTagName(name);
 		for (int i = 0; i < nl.getLength(); i++) {
 			Element e = (Element) nl.item(i);
-			GracenoteMetadataOET oet = new GracenoteMetadataOET(e.getAttribute("ID"), e
-					.getFirstChild().getNodeValue());
+			GracenoteMetadataOET oet = new GracenoteMetadataOET(
+					e.getAttribute("ID"), e.getFirstChild().getNodeValue());
 			al.add(oet);
 		}
 
@@ -181,7 +198,6 @@ public class GracenoteMetadata {
 		}
 	}
 
-
 	public String getArtist() {
 		return !getString("track_artist_name").equals("") ? getString("track_artist_name")
 				: getString("album_artist_name");
@@ -190,7 +206,8 @@ public class GracenoteMetadata {
 	@SuppressWarnings("unchecked")
 	public String getArrString(String key) {
 		try {
-			return ((ArrayList<GracenoteMetadataOET>) _data.get(0).get(key)).get(0).getText();
+			return ((ArrayList<GracenoteMetadataOET>) _data.get(0).get(key))
+					.get(0).getText();
 		} catch (NullPointerException | IndexOutOfBoundsException e) {
 			return "";
 		}
@@ -198,8 +215,9 @@ public class GracenoteMetadata {
 
 	public String getString(String key) {
 		try {
-			return (_data != null && _data.size() >= 1) ? (_data.get(0).containsKey(key) ? _data
-					.get(0).get(key).toString() : "") : "";
+			return (_data != null && _data.size() >= 1) ? (_data.get(0)
+					.containsKey(key) ? _data.get(0).get(key).toString() : "")
+					: "";
 
 		} catch (NullPointerException e) {
 			return "";
@@ -209,7 +227,8 @@ public class GracenoteMetadata {
 
 	public boolean hasAllData() {
 		return (!"".equals(getString("album_artist_name")) || !""
-				.equals(getString("track_artist_name"))) && !"".equals(getString("track_title"));
+				.equals(getString("track_artist_name")))
+				&& !"".equals(getString("track_title"));
 	}
 
 	public String getTitle() {

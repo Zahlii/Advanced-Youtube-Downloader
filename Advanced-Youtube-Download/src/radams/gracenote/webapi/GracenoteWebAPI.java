@@ -16,7 +16,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-
 // You will need a Gracenote Client ID to use this. Visit
 // https://developer.gracenote.com/ for info.
 
@@ -29,7 +28,8 @@ public class GracenoteWebAPI {
 	private String searchTrack;
 
 	// Constructor
-	public GracenoteWebAPI(String clientID, String clientTag) throws GracenoteException {
+	public GracenoteWebAPI(String clientID, String clientTag)
+			throws GracenoteException {
 		this(clientID, clientTag, "");
 	}
 
@@ -67,20 +67,21 @@ public class GracenoteWebAPI {
 		}
 
 		// Do the register request
-		String request = "<QUERIES>" + "<QUERY CMD=\"REGISTER\">" + "<CLIENT>" + clientID
-				+ "</CLIENT>" + "</QUERY>" + "</QUERIES>";
+		String request = "<QUERIES>" + "<QUERY CMD=\"REGISTER\">" + "<CLIENT>"
+				+ clientID + "</CLIENT>" + "</QUERY>" + "</QUERIES>";
 
 		String response = this._httpPostRequest(this._apiURL, request);
 		Document xml = this._checkResponse(response);
 
 		// Cache it locally then return to user.
-		this._userID = xml.getDocumentElement().getElementsByTagName("USER").item(0)
-				.getFirstChild().getNodeValue();
+		this._userID = xml.getDocumentElement().getElementsByTagName("USER")
+				.item(0).getFirstChild().getNodeValue();
 		return this._userID;
 	}
 
 	// Queries the Gracenote service for a track
-	public GracenoteMetadata searchTrack(String artistName, String albumTitle, String trackTitle) {
+	public GracenoteMetadata searchTrack(String artistName, String albumTitle,
+			String trackTitle) {
 		// Sanity check
 		if (this._userID.equals("")) {
 			this.register();
@@ -88,7 +89,8 @@ public class GracenoteWebAPI {
 
 		this.searchTrack = trackTitle;
 
-		String body = this._constructQueryBody(artistName, albumTitle, trackTitle);
+		String body = this._constructQueryBody(artistName, albumTitle,
+				trackTitle);
 		String data = this._constructQueryRequest(body);
 		return this._execute(data);
 	}
@@ -112,7 +114,8 @@ public class GracenoteWebAPI {
 			this.register();
 		}
 
-		String body = this._constructQueryBody("", "", "", gn_id, "ALBUM_FETCH");
+		String body = this
+				._constructQueryBody("", "", "", gn_id, "ALBUM_FETCH");
 		String data = this._constructQueryRequest(body, "ALBUM_FETCH");
 		return this._execute(data);
 	}
@@ -128,7 +131,8 @@ public class GracenoteWebAPI {
 			this.register();
 		}
 
-		String body = this._constructQueryBody("", "", "", gn_id, "ALBUM_FETCH");
+		String body = this
+				._constructQueryBody("", "", "", gn_id, "ALBUM_FETCH");
 		String data = this._constructQueryRequest(body, "ALBUM_FETCH");
 		String response = this._httpPostRequest(this._apiURL, data);
 		return this._checkResponse(response);
@@ -144,7 +148,8 @@ public class GracenoteWebAPI {
 	protected String _httpPostRequest(String url, String data) {
 		try {
 			URL u = new URL(url);
-			HttpURLConnection connection = (HttpURLConnection) u.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) u
+					.openConnection();
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
@@ -192,19 +197,22 @@ public class GracenoteWebAPI {
 	}
 
 	protected String _constructQueryRequest(String body, String command) {
-		return "<QUERIES>" + "<AUTH>" + "<CLIENT>" + this._clientID + "-" + this._clientTag
-				+ "</CLIENT>" + "<USER>" + this._userID + "</USER>" + "</AUTH>" + "<QUERY CMD=\""
-				+ command + "\">" + body + "</QUERY>" + "</QUERIES>";
+		return "<QUERIES>" + "<AUTH>" + "<CLIENT>" + this._clientID + "-"
+				+ this._clientTag + "</CLIENT>" + "<USER>" + this._userID
+				+ "</USER>" + "</AUTH>" + "<QUERY CMD=\"" + command + "\">"
+				+ body + "</QUERY>" + "</QUERIES>";
 	}
 
 	// Constructs the main request body, including some default options for
 	// metadata, etc.
-	protected String _constructQueryBody(String artist, String album, String track) {
-		return this._constructQueryBody(artist, album, track, "", "ALBUM_SEARCH");
+	protected String _constructQueryBody(String artist, String album,
+			String track) {
+		return this._constructQueryBody(artist, album, track, "",
+				"ALBUM_SEARCH");
 	}
 
-	protected String _constructQueryBody(String artist, String album, String track, String gn_id,
-			String command) {
+	protected String _constructQueryBody(String artist, String album,
+			String track, String gn_id, String command) {
 		String body = "";
 
 		// If a fetch scenario, user the Gracenote ID.
@@ -225,8 +233,8 @@ public class GracenoteWebAPI {
 
 			// Only want the thumbnail cover art for now
 			// (LARGE,XLARGE,SMALL,MEDIUM,THUMBNAIL)
-			body += "<OPTION>" + "<PARAMETER>COVER_SIZE</PARAMETER>" + "<VALUE>MEDIUM</VALUE>"
-					+ "</OPTION>";
+			body += "<OPTION>" + "<PARAMETER>COVER_SIZE</PARAMETER>"
+					+ "<VALUE>MEDIUM</VALUE>" + "</OPTION>";
 		}
 		// Otherwise, just do a search.
 		else {
@@ -255,14 +263,16 @@ public class GracenoteWebAPI {
 		try {
 			// Get and parse into a document
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(new InputSource(new StringReader(response)));
+			Document doc = db
+					.parse(new InputSource(new StringReader(response)));
 
 			// Navigate to the status code and read it.
 			Element root = doc.getDocumentElement();
 			NodeList nl = root.getElementsByTagName("RESPONSE");
 			String status = "ERROR";
 			if (nl != null && nl.getLength() > 0) {
-				status = nl.item(0).getAttributes().getNamedItem("STATUS").getNodeValue();
+				status = nl.item(0).getAttributes().getNamedItem("STATUS")
+						.getNodeValue();
 			}
 
 			// Handle error codes accordingly

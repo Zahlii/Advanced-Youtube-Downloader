@@ -10,8 +10,6 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-
-
 public class Media {
 	public static final ImageIcon ICON_MUSIC = getImageIcon("icon_music.png");
 	public static final ImageIcon ICON_DOWNLOAD = getImageIcon("icon_download.png");
@@ -56,7 +54,8 @@ public class Media {
 			finalw = (int) (finalh * factor);
 		}
 
-		BufferedImage resizedImg = new BufferedImage(finalw, finalh, Transparency.TRANSLUCENT);
+		BufferedImage resizedImg = new BufferedImage(finalw, finalh,
+				Transparency.TRANSLUCENT);
 		Graphics2D g2 = resizedImg.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BILINEAR);

@@ -2,7 +2,6 @@ package de.zahlii.youtube.download.step;
 
 import de.zahlii.youtube.download.basic.Logging;
 
-
 public class DownloadInfo {
 	public double progress;
 	public long size;
@@ -34,9 +33,7 @@ public class DownloadInfo {
 	}
 
 	private long parseSize(String string) {
-		String[] sizes = new String[] {
-				"KiB", "MiB", "GiB"
-		};
+		String[] sizes = new String[] { "KiB", "MiB", "GiB" };
 		long factor = 1;
 		for (String key : sizes) {
 			factor *= 1024;
@@ -51,6 +48,7 @@ public class DownloadInfo {
 	}
 
 	public static boolean isProgress(String line) {
-		return line.startsWith("[download]") && line.contains("ETA") && !line.contains("Unknown");
+		return line.startsWith("[download]") && line.contains("ETA")
+				&& !line.contains("Unknown");
 	}
 }
