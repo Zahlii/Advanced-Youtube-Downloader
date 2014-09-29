@@ -29,7 +29,7 @@ public class StepSilenceDetect extends Step {
 		meta.add("-i");
 		meta.add(this.entry.getDownloadTempFile().getAbsolutePath());
 		meta.add("-af");
-		meta.add("silencedetect=n=-50dB:d=1");
+		meta.add("silencedetect=n=-50dB:d=0.5");
 		meta.add("-f");
 		meta.add("null");
 		meta.add("-");
@@ -49,7 +49,9 @@ public class StepSilenceDetect extends Step {
 			public void processLineOut(final String line) {
 				if (SilenceInfo.isSilenceInfo(line)) {
 					final SilenceInfo si = new SilenceInfo(line);
-					StepSilenceDetect.this.silence.add(si);
+					if (si.isValid()) {
+						StepSilenceDetect.this.silence.add(si);
+					}
 				}
 			}
 
@@ -80,6 +82,7 @@ public class StepSilenceDetect extends Step {
 				}
 			}
 			cutStart = true;
+			cutEnd = true;
 		}
 
 		this.entry.getStepInfo().put("silence.start", cutStart);
@@ -108,12 +111,9 @@ public class StepSilenceDetect extends Step {
 				+ this.entry.getStepInfo().get("silence.end.time")
 				: "";
 
-		String r = "";
-		if (ss != "") {
-			r += ss + (se != "" ? ", " + se : "");
-		}
+		String r = ss;
+		r += se.equals("") ? "" : (ss.equals("") ? se : ", " + se);
 
 		return r.equals("") ? "No silence to remove." : r + ".";
 	}
-
 }

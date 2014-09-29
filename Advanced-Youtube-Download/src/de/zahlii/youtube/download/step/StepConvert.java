@@ -23,15 +23,24 @@ public class StepConvert extends Step {
 	@Override
 	public void doStep() {
 		// not necessary
-		if (!this.entry.getStepInfo().containsKey("silence.start")
-				&& !this.entry.getStepInfo().containsKey("silence.end")
-				&& !this.entry.getStepInfo().containsKey("volume.level")
-				&& this.entry.getDownloadTempFile().getName()
-						.equals(this.entry.getConvertTempFile().getName())) {
+		final boolean hasSilenceStart = this.entry.getStepInfo().containsKey(
+				"silence.start")
+				&& (boolean) this.entry.getStepInfo().get("silence.start");
+		final boolean hasSilenceEnd = this.entry.getStepInfo().containsKey(
+				"silence.end")
+				&& (boolean) this.entry.getStepInfo().get("silence.end");
+		final boolean sameFile = this.entry.getDownloadTempFile().getName()
+				.equals(this.entry.getConvertTempFile().getName());
+		final boolean hasVolume = this.entry.getStepInfo().containsKey(
+				"volume.level");
+
+		if (!hasSilenceStart && !hasSilenceEnd && sameFile && !hasVolume) {
 			Logging.log("Skipping conversion");
+			this.entry.getStepInfo().put("skipped", true);
 			this.nextStep();
 			return;
 		}
+		this.entry.getStepInfo().put("skipped", false);
 		File target = this.entry.getConvertTempFile();
 		if (target.getAbsolutePath().equals(
 				this.entry.getDownloadTempFile().getAbsolutePath())) {
@@ -39,6 +48,9 @@ public class StepConvert extends Step {
 			target = new File(ConfigManager.TEMP_DIR + ConfigManager.DS
 					+ this.entry.getConvertTempFile().getName());
 
+			this.entry.getStepInfo().put("is_forked", true);
+		} else {
+			this.entry.getStepInfo().put("is_forked", false);
 		}
 
 		final ProcessBuilder n = new ProcessBuilder();

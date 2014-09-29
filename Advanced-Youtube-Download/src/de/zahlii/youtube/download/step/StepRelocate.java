@@ -31,6 +31,11 @@ public class StepRelocate extends Step {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void doStep() {
+		if ((boolean) this.entry.getStepInfo().get("skipped")) {
+			Logging.log("Skipping relocate");
+			this.nextStep();
+			return;
+		}
 		this.data = (Map<FieldKey, String>) (this.entry.getStepInfo()
 				.get("meta.data"));
 
@@ -57,22 +62,34 @@ public class StepRelocate extends Step {
 					+ this.entry.getDownloadTempFile().getName());
 		}
 
-		if (this.finalFile.exists()
-				&& !this.finalFile.equals(this.entry.getConvertTempFile())) {
+		if (this.finalFile.exists()) {
 
 			final Runnable r = new Runnable() {
 
 				@Override
 				public void run() {
-					final int answer = JOptionPane
-							.showConfirmDialog(
-									null,
-									"The file "
-											+ StepRelocate.this.finalFile
-													.getAbsolutePath()
-											+ " already exists.\nDo you want to overwrite it?",
-									"File exists", JOptionPane.YES_NO_OPTION,
-									JOptionPane.WARNING_MESSAGE);
+					// this is set to true whenever a temporary file has been
+					// added for conversion
+					final boolean show = (boolean) StepRelocate.this.entry
+							.getStepInfo().get("is_forked");
+
+					final int answer;
+
+					if (!show) {
+						answer = JOptionPane
+								.showConfirmDialog(
+										null,
+										"The file "
+												+ StepRelocate.this.finalFile
+														.getAbsolutePath()
+												+ " already exists.\nDo you want to overwrite it?",
+										"File exists",
+										JOptionPane.YES_NO_OPTION,
+										JOptionPane.WARNING_MESSAGE);
+
+					} else {
+						answer = JOptionPane.OK_OPTION;
+					}
 
 					if (answer == JOptionPane.OK_OPTION) {
 						FileUtils.deleteQuietly(StepRelocate.this.finalFile);
@@ -117,7 +134,8 @@ public class StepRelocate extends Step {
 
 	@Override
 	public String getStepResults() {
-		return "Moved to " + this.finalFile.getName() + ".";
+		return this.finalFile != null ? "Moved to " + this.finalFile.getName()
+				+ "." : "";
 	}
 
 }
