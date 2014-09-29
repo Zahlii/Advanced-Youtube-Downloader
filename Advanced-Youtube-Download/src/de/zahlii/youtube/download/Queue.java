@@ -3,6 +3,7 @@ package de.zahlii.youtube.download;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.step.Step;
 import de.zahlii.youtube.download.ui.DownloadFrame.Stage;
 
@@ -14,107 +15,111 @@ public class Queue implements ProgressListener {
 	}
 
 	public static Queue getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new Queue();
+		}
 
 		return instance;
 	}
 
-	private ArrayList<ProgressListener> progressListeners = new ArrayList<>();
-	private LinkedList<QueueEntry> queue = new LinkedList<>();
+	private final ArrayList<ProgressListener> progressListeners = new ArrayList<>();
+	private final LinkedList<QueueEntry> queue = new LinkedList<>();
 	private Stage status = Stage.IDLE;
 	private int queueSizeTotal = 0;
 	private int queueSizeCurrent = 0;
 
-	public void addListener(ProgressListener l) {
-		progressListeners.add(l);
+	public void addListener(final ProgressListener l) {
+		this.progressListeners.add(l);
 	}
 
-	public void removeListener(ProgressListener l) {
-		progressListeners.remove(l);
+	public void removeListener(final ProgressListener l) {
+		this.progressListeners.remove(l);
 	}
 
-	public QueueEntry addDownload(String webURL) {
-		QueueEntry q = new QueueEntry(webURL);
-		addEntry(q);
+	public QueueEntry addDownload(final String webURL) {
+		final QueueEntry q = new QueueEntry(webURL);
+		this.addEntry(q);
 		return q;
 	}
 
-	public void removeDownload(String webURL) {
-		for (QueueEntry q : queue) {
+	public void removeDownload(final String webURL) {
+		for (final QueueEntry q : this.queue) {
 			if (q.getWebURL().equals(webURL)) {
-				queue.remove(q);
+				this.queue.remove(q);
 				q.removeListener(this);
-				queueSizeTotal--;
-				queueSizeCurrent--;
+				this.queueSizeTotal--;
+				this.queueSizeCurrent--;
 				return;
 			}
 		}
 	}
 
 	public QueueEntry popNextItem() {
-		return queue.isEmpty() ? null : queue.removeFirst();
+		return this.queue.isEmpty() ? null : this.queue.removeFirst();
 	}
 
 	public double getQueueProgress() {
-		return 1 - (queueSizeCurrent) / Math.max(1.0, queueSizeTotal);
+		return 1 - (this.queueSizeCurrent) / Math.max(1.0, this.queueSizeTotal);
 	}
 
 	public void beginQueue() {
-		if (status == Stage.WORKING)
+		if (this.status == Stage.WORKING)
 			return;
 
 		QueueEntry q;
-		if ((q = popNextItem()) != null) {
+		if ((q = this.popNextItem()) != null) {
+			Logging.log("Handling " + q.getDownloadTempFile().getAbsolutePath());
 			q.start();
-			status = Stage.WORKING;
+			this.status = Stage.WORKING;
 		}
 	}
 
 	@Override
-	public void onEntryBegin(QueueEntry entry) {
-		for (ProgressListener l : progressListeners) {
+	public void onEntryBegin(final QueueEntry entry) {
+		for (final ProgressListener l : this.progressListeners) {
 			l.onEntryBegin(entry);
 		}
 	}
 
 	@Override
-	public void onEntryStepBegin(QueueEntry entry, Step step) {
-		for (ProgressListener l : progressListeners) {
+	public void onEntryStepBegin(final QueueEntry entry, final Step step) {
+		for (final ProgressListener l : this.progressListeners) {
 			l.onEntryStepBegin(entry, step);
 		}
 	}
 
 	@Override
-	public void onEntryStepProgress(QueueEntry entry, Step step, double progress) {
-		for (ProgressListener l : progressListeners) {
+	public void onEntryStepProgress(final QueueEntry entry, final Step step,
+			final double progress) {
+		for (final ProgressListener l : this.progressListeners) {
 			l.onEntryStepProgress(entry, step, progress);
 		}
 	}
 
 	@Override
-	public void onEntryStepEnd(QueueEntry entry, Step step, long t, double p) {
-		for (ProgressListener l : progressListeners) {
+	public void onEntryStepEnd(final QueueEntry entry, final Step step,
+			final long t, final double p) {
+		for (final ProgressListener l : this.progressListeners) {
 			l.onEntryStepEnd(entry, step, t, p);
 		}
 	}
 
 	@Override
-	public void onEntryEnd(QueueEntry entry) {
-		queueSizeCurrent--;
-		for (ProgressListener l : progressListeners) {
+	public void onEntryEnd(final QueueEntry entry) {
+		this.queueSizeCurrent--;
+		for (final ProgressListener l : this.progressListeners) {
 			l.onEntryEnd(entry);
 		}
-		status = Stage.IDLE;
-		beginQueue();
+		this.status = Stage.IDLE;
+		this.beginQueue();
 	}
 
-	public void addEntry(QueueEntry q) {
+	public void addEntry(final QueueEntry q) {
 		q.addListener(this);
-		queue.add(q);
-		queueSizeTotal++;
-		queueSizeCurrent++;
-		beginQueue();
+		this.queue.add(q);
+		this.queueSizeTotal++;
+		this.queueSizeCurrent++;
+		this.beginQueue();
 	}
 
 }

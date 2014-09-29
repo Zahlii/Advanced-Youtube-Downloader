@@ -14,11 +14,11 @@ public class CLI {
 
 	private BufferedReader in;
 	private BufferedWriter out;
-	private ProcessBuilder b;
+	private final ProcessBuilder b;
 	private Process p;
-	private List<ProcessListener> listener;
+	private final List<ProcessListener> listener;
 
-	public CLI(ProcessBuilder b) {
+	public CLI(final ProcessBuilder b) {
 		this.b = b;
 		this.listener = new ArrayList<ProcessListener>();
 
@@ -26,41 +26,43 @@ public class CLI {
 
 	public void run() {
 		try {
-			b.redirectErrorStream(true);
-			p = b.start();
-			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			out = new BufferedWriter(
-					new OutputStreamWriter(p.getOutputStream()));
+			this.b.redirectErrorStream(true);
+			this.p = this.b.start();
+			this.in = new BufferedReader(new InputStreamReader(
+					this.p.getInputStream()));
+			this.out = new BufferedWriter(new OutputStreamWriter(
+					this.p.getOutputStream()));
 
-			while (processInLine()) {
+			while (this.processInLine()) {
 
 			}
-			for (ProcessListener l : this.listener) {
+			for (final ProcessListener l : this.listener) {
 				l.processStop();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Logging.log("CLI run failed", e);
 		}
 	}
 
-	private void processOutLine(String line) throws IOException {
+	private void processOutLine(final String line) throws IOException {
 		String write = null;
 		Logging.log("[CLI IN]\t" + line);
 
-		for (ProcessListener l : this.listener) {
+		for (final ProcessListener l : this.listener) {
 			write = l.processLineIn(line);
 			break;
 		}
-		if (write != null)
-			out.write(write);
+		if (write != null) {
+			this.out.write(write);
+		}
 	}
 
 	private boolean processInLine() throws IOException {
 		String line;
 
-		if ((line = in.readLine()) != null) {
-			Logging.log("[CLI]\t" + line);
-			for (ProcessListener l : this.listener) {
+		if ((line = this.in.readLine()) != null) {
+			// Logging.log("[CLI]\t" + line);
+			for (final ProcessListener l : this.listener) {
 				l.processLineOut(line);
 			}
 			return true;
@@ -68,11 +70,11 @@ public class CLI {
 		return false;
 	}
 
-	public void addProcessListener(ProcessListener l) {
+	public void addProcessListener(final ProcessListener l) {
 		this.listener.add(l);
 	}
 
-	public void removeProcessListener(ProcessListener l) {
+	public void removeProcessListener(final ProcessListener l) {
 		this.listener.remove(l);
 	}
 

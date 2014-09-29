@@ -29,6 +29,23 @@ import de.zahlii.youtube.download.step.StepVolumeAdjust;
  * 
  */
 public class QueueEntry extends Thread {
+
+	public static void setEnableSilence(final boolean enableSilence) {
+		QueueEntry.enableSilence = enableSilence;
+	}
+
+	public static void setEnableVolume(final boolean enableVolume) {
+		QueueEntry.enableVolume = enableVolume;
+	}
+
+	public static void setEnableGracenote(final boolean enableGracenote) {
+		QueueEntry.enableGracenote = enableGracenote;
+	}
+
+	private static boolean enableSilence;
+	private static boolean enableVolume;
+	private static boolean enableGracenote;
+
 	private String webURL;
 	private File downloadTempFile;
 	private File finalMP3File;
@@ -64,25 +81,38 @@ public class QueueEntry extends Thread {
 	 * @param file
 	 */
 	public QueueEntry(final File file) {
+
 		this.downloadTempFile = file;
 		this.isDownloadTask = false;
 		if (Boolean.valueOf(ConfigManager.getInstance().getConfig(
 				ConfigKey.IMPROVE_CONVERT, "true"))) {
-			this.stepsToComplete.add(new StepSilenceDetect(this));
-			if (ConfigManager.getInstance()
-					.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
-					.equals("Peak Normalize")) {
-				this.stepsToComplete.add(new StepVolumeAdjust(this));
+			if (QueueEntry.enableSilence) {
+				this.stepsToComplete.add(new StepSilenceDetect(this));
+			}
+			if (QueueEntry.enableVolume) {
+				if (ConfigManager.getInstance()
+						.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+						.equals("Peak Normalize")) {
+					this.stepsToComplete.add(new StepVolumeAdjust(this));
+				}
 			}
 
-			this.stepsToComplete.add(new StepConvert(this));
-			this.stepsToComplete.add(new StepMetaSearch(this));
+			if (QueueEntry.enableSilence || QueueEntry.enableVolume) {
+				this.stepsToComplete.add(new StepConvert(this));
+			}
+
+			if (QueueEntry.enableGracenote) {
+				this.stepsToComplete.add(new StepMetaSearch(this));
+			}
+
 			this.stepsToComplete.add(new StepRelocate(this));
 
-			if (ConfigManager.getInstance()
-					.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
-					.equals("ReplayGain")) {
-				this.stepsToComplete.add(new StepReplayGain(this));
+			if (QueueEntry.enableVolume) {
+				if (ConfigManager.getInstance()
+						.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+						.equals("ReplayGain")) {
+					this.stepsToComplete.add(new StepReplayGain(this));
+				}
 			}
 		}
 	}
@@ -108,11 +138,8 @@ public class QueueEntry extends Thread {
 					Logging.log("failed moving video file to destination", e);
 				}
 			}
-			this.remove(this.getDownloadTempFile());
-
 		}
 
-		this.remove(this.getCoverTempFile());
 	}
 
 	/**

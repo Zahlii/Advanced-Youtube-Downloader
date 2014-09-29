@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FileUtils;
 import org.jaudiotagger.tag.FieldKey;
@@ -19,7 +20,7 @@ public class StepRelocate extends Step {
 	private Map<FieldKey, String> data;
 	private File finalFile;
 
-	public StepRelocate(QueueEntry entry) {
+	public StepRelocate(final QueueEntry entry) {
 		super(
 				entry,
 				new StepDescriptor("FileRelocate",
@@ -30,60 +31,93 @@ public class StepRelocate extends Step {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void doStep() {
-		data = (Map<FieldKey, String>) (entry.getStepInfo().get("meta.data"));
+		this.data = (Map<FieldKey, String>) (this.entry.getStepInfo()
+				.get("meta.data"));
 
-		String convention = ConfigManager.getInstance().getConfig(
-				ConfigKey.FILENAME_CONVENTION, "%artist - %title");
-		// %album, %title, %artist, %track, %tracktotal, %year
-
-		convention = r(convention, "%album", FieldKey.ALBUM);
-		convention = r(convention, "%title", FieldKey.TITLE);
-		convention = r(convention, "%artist", FieldKey.ARTIST);
-		convention = r(convention, "%track", FieldKey.TRACK);
-		convention = r(convention, "%tracktotal", FieldKey.TRACK_TOTAL);
-		convention = r(convention, "%year", FieldKey.YEAR);
-
-		String dirPath = ConfigManager.getInstance().getConfig(
+		final String dirPath = ConfigManager.getInstance().getConfig(
 				ConfigKey.DIR_TARGET, ConfigManager.TEMP_DIR.getAbsolutePath());
 
-		finalFile = new File(dirPath + ConfigManager.DS + convention
-				+ entry.getExtension());
+		if (this.data != null) {
+			String convention = ConfigManager.getInstance().getConfig(
+					ConfigKey.FILENAME_CONVENTION, "%artist - %title");
+			// %album, %title, %artist, %track, %tracktotal, %year
 
-		try {
-			if (finalFile.exists()
-					&& !finalFile.equals(entry.getConvertTempFile())) {
-				int answer = JOptionPane.showConfirmDialog(null, "The file "
-						+ finalFile.getAbsolutePath()
-						+ " already exists.\nDo you want to overwrite it?",
-						"File exists", JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE);
+			convention = this.r(convention, "%album", FieldKey.ALBUM);
+			convention = this.r(convention, "%title", FieldKey.TITLE);
+			convention = this.r(convention, "%artist", FieldKey.ARTIST);
+			convention = this.r(convention, "%track", FieldKey.TRACK);
+			convention = this
+					.r(convention, "%tracktotal", FieldKey.TRACK_TOTAL);
+			convention = this.r(convention, "%year", FieldKey.YEAR);
 
-				if (answer == JOptionPane.OK_OPTION) {
-					FileUtils.deleteQuietly(finalFile);
-					FileUtils.moveFile(entry.getConvertTempFile(), finalFile);
-					entry.setFinalMP3File(finalFile);
-				} else {
-					// entry.setFinalMP3File(finalFile);
-				}
-			} else {
-				FileUtils.moveFile(entry.getConvertTempFile(), finalFile);
-				entry.setFinalMP3File(finalFile);
-			}
-
-		} catch (IOException e) {
-			Logging.log("failed to move file to new location", e);
+			this.finalFile = new File(dirPath + ConfigManager.DS + convention
+					+ this.entry.getExtension());
+		} else {
+			this.finalFile = new File(dirPath + ConfigManager.DS
+					+ this.entry.getDownloadTempFile().getName());
 		}
 
-		nextStep();
+		if (this.finalFile.exists()
+				&& !this.finalFile.equals(this.entry.getConvertTempFile())) {
+
+			final Runnable r = new Runnable() {
+
+				@Override
+				public void run() {
+					final int answer = JOptionPane
+							.showConfirmDialog(
+									null,
+									"The file "
+											+ StepRelocate.this.finalFile
+													.getAbsolutePath()
+											+ " already exists.\nDo you want to overwrite it?",
+									"File exists", JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+
+					if (answer == JOptionPane.OK_OPTION) {
+						FileUtils.deleteQuietly(StepRelocate.this.finalFile);
+						try {
+							FileUtils.moveFile(StepRelocate.this.entry
+									.getConvertTempFile(),
+									StepRelocate.this.finalFile);
+						} catch (final IOException e) {
+							Logging.log("failed to move file to new location",
+									e);
+						}
+						StepRelocate.this.entry
+								.setFinalMP3File(StepRelocate.this.finalFile);
+					} else {
+						// entry.setFinalMP3File(finalFile);
+					}
+
+				}
+
+			};
+			if (SwingUtilities.isEventDispatchThread()) {
+				r.run();
+			} else {
+				SwingUtilities.invokeLater(r);
+			}
+		} else {
+			try {
+				FileUtils.moveFile(this.entry.getConvertTempFile(),
+						this.finalFile);
+				this.entry.setFinalMP3File(this.finalFile);
+			} catch (final IOException e) {
+				Logging.log("failed to move file to new location", e);
+			}
+		}
+
+		this.nextStep();
 	}
 
-	private String r(String d, String s, FieldKey r) {
-		return d.replace(s, Helper.sanitize(data.get(r)));
+	private String r(final String d, final String s, final FieldKey r) {
+		return d.replace(s, Helper.sanitize(this.data.get(r)));
 	}
 
 	@Override
 	public String getStepResults() {
-		return "Moved to " + finalFile.getName() + ".";
+		return "Moved to " + this.finalFile.getName() + ".";
 	}
 
 }

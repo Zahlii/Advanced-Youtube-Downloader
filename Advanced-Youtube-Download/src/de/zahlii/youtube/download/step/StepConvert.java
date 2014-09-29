@@ -1,16 +1,18 @@
 package de.zahlii.youtube.download.step;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.zahlii.youtube.download.QueueEntry;
 import de.zahlii.youtube.download.basic.ConfigManager;
 import de.zahlii.youtube.download.basic.ConfigManager.ConfigKey;
+import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.cli.CLI;
 
 public class StepConvert extends Step {
 
-	public StepConvert(QueueEntry entry) {
+	public StepConvert(final QueueEntry entry) {
 		super(
 				entry,
 				new StepDescriptor(
@@ -20,14 +22,33 @@ public class StepConvert extends Step {
 
 	@Override
 	public void doStep() {
-		ProcessBuilder n = new ProcessBuilder();
+		// not necessary
+		if (!this.entry.getStepInfo().containsKey("silence.start")
+				&& !this.entry.getStepInfo().containsKey("silence.end")
+				&& !this.entry.getStepInfo().containsKey("volume.level")
+				&& this.entry.getDownloadTempFile().getName()
+						.equals(this.entry.getConvertTempFile().getName())) {
+			Logging.log("Skipping conversion");
+			this.nextStep();
+			return;
+		}
+		File target = this.entry.getConvertTempFile();
+		if (target.getAbsolutePath().equals(
+				this.entry.getDownloadTempFile().getAbsolutePath())) {
 
-		List<String> meta = new ArrayList<String>();
+			target = new File(ConfigManager.TEMP_DIR + ConfigManager.DS
+					+ this.entry.getConvertTempFile().getName());
+
+		}
+
+		final ProcessBuilder n = new ProcessBuilder();
+
+		final List<String> meta = new ArrayList<String>();
 		meta.add(ConfigManager.FFMPEG.getAbsolutePath());
 		meta.add("-i");
-		meta.add(entry.getDownloadTempFile().getAbsolutePath());
+		meta.add(this.entry.getDownloadTempFile().getAbsolutePath());
 		meta.add("-y");
-		if (!entry.isFLAC()) {
+		if (!this.entry.isFLAC()) {
 			meta.add("-ab");
 			meta.add(ConfigManager.getInstance().getConfig(
 					ConfigKey.AUDIO_BITRATE, "320")
@@ -37,52 +58,54 @@ public class StepConvert extends Step {
 			meta.add("12");
 		}
 
-		if (entry.getStepInfo().containsKey("silence.start")
-				&& (boolean) entry.getStepInfo().get("silence.start")) {
+		if (this.entry.getStepInfo().containsKey("silence.start")
+				&& (boolean) this.entry.getStepInfo().get("silence.start")) {
 			meta.add("-ss");
-			meta.add((double) entry.getStepInfo().get("silence.start.time")
-					+ "");
+			meta.add((double) this.entry.getStepInfo()
+					.get("silence.start.time") + "");
 		}
-		if (entry.getStepInfo().containsKey("silence.end")
-				&& (boolean) entry.getStepInfo().get("silence.end")) {
+		if (this.entry.getStepInfo().containsKey("silence.end")
+				&& (boolean) this.entry.getStepInfo().get("silence.end")) {
 			meta.add("-t");
 			double s = 0;
 			try {
-				s = (double) entry.getStepInfo().get("silence.start.time");
-			} catch (NullPointerException e) {
+				s = (double) this.entry.getStepInfo().get("silence.start.time");
+			} catch (final NullPointerException e) {
 
 			}
-			meta.add(((double) entry.getStepInfo().get("silence.end.time") - s)
+			meta.add(((double) this.entry.getStepInfo().get("silence.end.time") - s)
 					+ "");
 		}
 
 		double v = 0.0;
 
-		if (entry.getStepInfo().containsKey("volume.level")
-				&& (v = (double) entry.getStepInfo().get("volume.level")) > 1) {
+		if (this.entry.getStepInfo().containsKey("volume.level")
+				&& (v = (double) this.entry.getStepInfo().get("volume.level")) > 1) {
 			meta.add("-af");
 			meta.add("volume=" + v + "dB:precision=double");
 		}
 
-		meta.add(entry.getConvertTempFile().getAbsolutePath());
+		meta.add(target.getAbsolutePath());
+		this.entry.setDownloadTempFile(target);
+		Logging.log("Running " + meta);
 		n.command(meta);
 
-		CLI y = new CLI(n);
-		FFMPEGTimeProcessListener x = new FFMPEGTimeProcessListener() {
+		final CLI y = new CLI(n);
+		final FFMPEGTimeProcessListener x = new FFMPEGTimeProcessListener() {
 			@Override
-			public void onProgress(double progress) {
-				reportProgress(progress);
+			public void onProgress(final double progress) {
+				StepConvert.this.reportProgress(progress);
 			}
 		};
 		y.addProcessListener(x);
 		y.run();
 
-		nextStep();
+		this.nextStep();
 	}
 
 	@Override
 	public String getStepResults() {
-		return "File converted to " + entry.getConvertTempFile().getName()
+		return "File converted to " + this.entry.getConvertTempFile().getName()
 				+ ".";
 	}
 
