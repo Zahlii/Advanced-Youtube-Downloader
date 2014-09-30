@@ -20,7 +20,7 @@ public class StepMetaSearch extends Step {
 	private String artist = "", title = "", album = "";
 	private GracenoteMetadata d;
 
-	public StepMetaSearch(QueueEntry entry) {
+	public StepMetaSearch(final QueueEntry entry) {
 		super(
 				entry,
 				new StepDescriptor("GracenoteSearch",
@@ -29,55 +29,57 @@ public class StepMetaSearch extends Step {
 
 	@Override
 	public void doStep() {
-		String baseName = FilenameUtils.getBaseName(entry.getDownloadTempFile()
-				.getAbsolutePath());
+		final String baseName = FilenameUtils.getBaseName(this.entry
+				.getDownloadTempFile().getAbsolutePath());
 
-		String[] parts = baseName.split("-");
+		final String[] parts = baseName.split("-");
 
 		switch (parts.length) {
 		case 1:
-			title = parts[0].trim();
+			this.title = parts[0].trim();
 			break;
 		case 2:
-			artist = parts[0].trim();
-			title = parts[1].trim();
+			this.artist = parts[0].trim();
+			this.title = parts[1].trim();
 			break;
 		case 3:
-			artist = parts[0].trim();
-			title = parts[1].trim();
-			album = parts[2].trim();
+			this.artist = parts[0].trim();
+			this.title = parts[1].trim();
+			this.album = parts[2].trim();
 			break;
 		default:
-			int n = parts.length - 3;
-			artist = parts[n].trim();
-			title = parts[n + 1].trim();
-			album = parts[n + 2].trim();
+			final int n = parts.length - 3;
+			this.artist = parts[n].trim();
+			this.title = parts[n + 1].trim();
+			this.album = parts[n + 2].trim();
 		}
 
-		handleMetaSearch();
+		this.handleMetaSearch();
 	}
 
 	@Override
 	public String getStepResults() {
-		return d == null ? "No Gracenote match found."
-				: "Found possible match with songtitle " + d.getTitle() + ".";
+		return this.d == null ? "No Gracenote match found."
+				: "Found possible match with songtitle " + this.d.getTitle()
+						+ ".";
 	}
 
 	private void handleMetaSearch() {
 
 		if (SwingUtilities.isEventDispatchThread()) {
-			final SearchFrame sf = new SearchFrame(artist, title, album);
+			final SearchFrame sf = new SearchFrame(this.artist, this.title,
+					this.album);
 			sf.addActionListener(new ActionListener() {
 
 				@Override
-				public void actionPerformed(ActionEvent arg0) {
+				public void actionPerformed(final ActionEvent arg0) {
 					if (arg0 == null) {
-						// closed or cancel
+						StepMetaSearch.this.handleMetaResult();
 					} else {
-						d = SearchManager.getInstance().searchForSong(
-								sf.getArtist(), sf.getAlbum(),
-								sf.getSongTitle());
-						handleMetaResult();
+						StepMetaSearch.this.d = SearchManager.getInstance()
+								.searchForSong(sf.getArtist(), sf.getAlbum(),
+										sf.getSongTitle());
+						StepMetaSearch.this.handleMetaResult();
 					}
 				}
 
@@ -88,7 +90,7 @@ public class StepMetaSearch extends Step {
 
 				@Override
 				public void run() {
-					handleMetaSearch();
+					StepMetaSearch.this.handleMetaSearch();
 
 				}
 
@@ -98,15 +100,18 @@ public class StepMetaSearch extends Step {
 
 	private void handleMetaResult() {
 		if (SwingUtilities.isEventDispatchThread()) {
-			final InfoFrame i = new InfoFrame(entry, d);
+			final InfoFrame i = new InfoFrame(this.entry, this.d);
+			if (this.d == null) {
+				i.fillInfo(this.artist, this.title, this.album);
+			}
 			i.addActionListener(new ActionListener() {
 
 				@Override
-				public void actionPerformed(ActionEvent arg0) {
+				public void actionPerformed(final ActionEvent arg0) {
 					if (arg0 == null) {
-						handleMetaSearch();
+						StepMetaSearch.this.handleMetaSearch();
 					} else {
-						saveMetaData(i);
+						StepMetaSearch.this.saveMetaData(i);
 					}
 				}
 
@@ -117,7 +122,7 @@ public class StepMetaSearch extends Step {
 
 				@Override
 				public void run() {
-					handleMetaResult();
+					StepMetaSearch.this.handleMetaResult();
 
 				}
 
@@ -126,8 +131,8 @@ public class StepMetaSearch extends Step {
 
 	}
 
-	private void saveMetaData(InfoFrame fr) {
-		Map<FieldKey, String> data = new HashMap<FieldKey, String>();
+	private void saveMetaData(final InfoFrame fr) {
+		final Map<FieldKey, String> data = new HashMap<FieldKey, String>();
 		data.put(FieldKey.ARTIST, fr.getArtist());
 		data.put(FieldKey.ALBUM_ARTIST, fr.getAlbumArtist());
 		data.put(FieldKey.CONDUCTOR, fr.getArtist());
@@ -140,14 +145,14 @@ public class StepMetaSearch extends Step {
 
 		data.put(FieldKey.GENRE, fr.getGenre());
 		data.put(FieldKey.TEMPO, fr.getTempo());
-		data.put(FieldKey.COMMENT, entry.getDownloadTempFile()
+		data.put(FieldKey.COMMENT, this.entry.getDownloadTempFile()
 				.getAbsolutePath());
 
-		entry.getStepInfo().put("meta.data", data);
+		this.entry.getStepInfo().put("meta.data", data);
 
 		fr.getTagEditor().writeAllFields(data);
 		fr.getTagEditor().writeArtwork(fr.getArtworkImage());
 		fr.getTagEditor().commit();
-		nextStep();
+		this.nextStep();
 	}
 }
