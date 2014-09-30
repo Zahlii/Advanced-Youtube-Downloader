@@ -68,7 +68,10 @@ public class Queue implements ProgressListener {
 
 		QueueEntry q;
 		if ((q = this.popNextItem()) != null) {
-			Logging.log("Handling " + q.getDownloadTempFile().getAbsolutePath());
+			if (q.getDownloadTempFile() != null) {
+				Logging.log("Handling "
+						+ q.getDownloadTempFile().getAbsolutePath());
+			}
 			q.start();
 			this.status = Stage.WORKING;
 		}

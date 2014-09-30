@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -151,6 +153,15 @@ public class DownloadFrame extends JFrame {
 				}
 			}
 		});
+		this.downloadLinkInput.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(final KeyEvent arg0) {
+				final String s = DownloadFrame.this.downloadLinkInput.getText();
+				final boolean en = !s.equals("Enter Download Link")
+						&& !s.equals("");
+				DownloadFrame.this.startDownloadBtn.setEnabled(en);
+			}
+		});
 		final GridBagConstraints gbc_downloadLinkInput = new GridBagConstraints();
 		gbc_downloadLinkInput.insets = new Insets(0, 0, 5, 5);
 		gbc_downloadLinkInput.gridwidth = 3;
@@ -162,6 +173,7 @@ public class DownloadFrame extends JFrame {
 		this.downloadLinkInput.setColumns(10);
 
 		this.startDownloadBtn = new JButton("Start Download");
+		this.startDownloadBtn.setEnabled(false);
 		this.startDownloadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
@@ -371,8 +383,10 @@ public class DownloadFrame extends JFrame {
 	private void setStage(final Stage s) {
 		switch (s) {
 		case IDLE:
-			this.startDownloadBtn.setEnabled(true);
 			this.downloadLinkInput.setEnabled(true);
+			this.stepProgress(0);
+			this.overallProgress(0);
+			this.queueProgress(0);
 			break;
 		case WORKING:
 			this.startDownloadBtn.setEnabled(false);

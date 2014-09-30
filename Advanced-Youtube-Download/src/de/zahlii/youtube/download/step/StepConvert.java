@@ -99,7 +99,6 @@ public class StepConvert extends Step {
 
 		meta.add(target.getAbsolutePath());
 		this.entry.setDownloadTempFile(target);
-		Logging.log("Running " + meta);
 		n.command(meta);
 
 		final CLI y = new CLI(n);

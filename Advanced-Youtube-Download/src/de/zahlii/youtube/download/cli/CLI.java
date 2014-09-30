@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.zahlii.youtube.download.basic.ConfigManager;
 import de.zahlii.youtube.download.basic.Logging;
 
 public class CLI {
@@ -24,7 +25,23 @@ public class CLI {
 
 	}
 
+	private static void printArgs(final List<String> list) {
+		final List<String> copy = new ArrayList<String>(list);
+		for (int i = 0, l = copy.size(); i < l; i++) {
+			String c = copy.get(i);
+			if (c.contains(":" + ConfigManager.DS)) {
+				final String[] p = c.split("\\\\");
+				final int x = p.length;
+				c = p[x - 2] + ConfigManager.DS + p[x - 1];
+				copy.remove(i);
+				copy.add(i, c);
+			}
+		}
+		Logging.log("executing\n\t" + copy.toString());
+	}
+
 	public void run() {
+		printArgs(this.b.command());
 		try {
 			this.b.redirectErrorStream(true);
 			this.p = this.b.start();

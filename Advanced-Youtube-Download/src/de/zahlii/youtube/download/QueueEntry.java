@@ -202,6 +202,7 @@ public class QueueEntry extends Thread {
 	}
 
 	public String getExtension() {
+		// FilenameUtils.getExtension(this.downloadTempFile.getAbsolutePath());
 		return this.isFLAC() ? ".flac" : ".mp3";
 	}
 

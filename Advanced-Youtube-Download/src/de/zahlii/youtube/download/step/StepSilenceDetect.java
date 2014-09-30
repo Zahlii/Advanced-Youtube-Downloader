@@ -67,22 +67,26 @@ public class StepSilenceDetect extends Step {
 		if (this.silence.size() == 0) {
 			// skip
 		} else if (this.silence.size() == 1) {
-			// has to be at the end because no end was given
-			lastSilenceStart = this.silence.get(0).getTimeStart();
-			cutEnd = true;
+			// might be at start or end
+			final SilenceInfo f = this.silence.get(0);
+			if (f.getTimeStart() == -1) { // only silence_end was given -> is at
+											// the start
+				cutStart = true;
+				firstSilenceEnd = f.getTimeEnd();
+			} else {
+				lastSilenceStart = this.silence.get(0).getTimeStart();
+				cutEnd = true;
+			}
+
 		} else {
 			// silence at all ends
-			for (final SilenceInfo s : this.silence) {
-				if (firstSilenceEnd == 0 && s.getTimeEnd() != -1) {
-					firstSilenceEnd = s.getTimeEnd();
-				}
+			final SilenceInfo f = this.silence.get(0);
+			final SilenceInfo l = this.silence.get(this.silence.size() - 1);
+			firstSilenceEnd = f.getTimeEnd();
+			lastSilenceStart = l.getTimeStart();
 
-				if (s.getTimeStart() != -1) {
-					lastSilenceStart = s.getTimeStart();
-				}
-			}
-			cutStart = true;
-			cutEnd = true;
+			cutStart = firstSilenceEnd > 0;
+			cutEnd = lastSilenceStart > 0;
 		}
 
 		this.entry.getStepInfo().put("silence.start", cutStart);
