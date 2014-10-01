@@ -20,47 +20,47 @@ public class Media {
 	public static final ImageIcon ICON_OK = getImageIcon("icon_ok.png");
 	public static final ImageIcon ICON_PREF = getImageIcon("icon_pref.png");
 
-	private static ImageIcon getImageIcon(String imageName) {
-		InputStream imagePathName = tryGet(imageName);
+	private static ImageIcon getImageIcon(final String imageName) {
+		final InputStream imagePathName = tryGet(imageName);
 		try {
-			BufferedImage image = ImageIO.read(imagePathName);
-			ImageIcon icon = new ImageIcon(image);
+			final BufferedImage image = ImageIO.read(imagePathName);
+			final ImageIcon icon = new ImageIcon(image);
 			return icon;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Logging.log("failed loading image icon", e);
 		}
 		return null;
 	}
 
-	private static InputStream tryGet(String path) {
-		InputStream img = Media.class.getResourceAsStream("/" + path);
-		if (img == null) {
-			Logging.log("failed loading " + path);
-			return null;
-		} else {
-			return img;
-		}
-	}
-
-	public static BufferedImage getScaledImage(BufferedImage src, int w, int h) {
+	public static BufferedImage getScaledImage(final BufferedImage src,
+			final int w, final int h) {
 		int finalw = w;
 		int finalh = h;
 		double factor = 1.0d;
 		if (src.getWidth() > src.getHeight()) {
-			factor = ((double) src.getHeight() / (double) src.getWidth());
+			factor = (double) src.getHeight() / (double) src.getWidth();
 			finalh = (int) (finalw * factor);
 		} else {
-			factor = ((double) src.getWidth() / (double) src.getHeight());
+			factor = (double) src.getWidth() / (double) src.getHeight();
 			finalw = (int) (finalh * factor);
 		}
 
-		BufferedImage resizedImg = new BufferedImage(finalw, finalh,
+		final BufferedImage resizedImg = new BufferedImage(finalw, finalh,
 				Transparency.TRANSLUCENT);
-		Graphics2D g2 = resizedImg.createGraphics();
+		final Graphics2D g2 = resizedImg.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2.drawImage(src, 0, 0, finalw, finalh, null);
 		g2.dispose();
 		return resizedImg;
+	}
+
+	private static InputStream tryGet(final String path) {
+		final InputStream img = Media.class.getResourceAsStream("/" + path);
+		if (img == null) {
+			Logging.log("failed loading " + path);
+			return null;
+		} else
+			return img;
 	}
 }

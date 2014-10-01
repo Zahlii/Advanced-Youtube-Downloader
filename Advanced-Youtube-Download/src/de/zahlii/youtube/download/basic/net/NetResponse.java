@@ -24,50 +24,13 @@ import org.apache.http.client.methods.HttpGet;
  */
 public class NetResponse {
 
-	public HttpGet request;
-	public List<Header> responseHeaders;
-	public String responseBody;
-	public StatusLine responseStatusLine;
-	public HttpEntity responseEntity;
-	public String responseType;
-	public BufferedInputStream responseStream;
-	public List<Header> requestHeaders;
-
-	@Override
-	public String toString() {
-		StringBuilder b = new StringBuilder();
-
-		b.append(request);
-		for (Header x : requestHeaders) {
-			b.append(x);
-			b.append("\n");
-		}
-		b.append("\n");
-		b.append("type: " + responseType);
-		b.append("\n");
-		for (Header x : responseHeaders) {
-			b.append(x);
-			b.append("\n");
-		}
-		b.append("size: " + responseBody.length());
-		b.append("\n");
-		b.append("====");
-		// b.append(responseBody);
-		b.append("====");
-
-		return b.toString();
-	}
-
-	public String extract(String s1, String s2) {
-		return extract(responseBody, s1, s2);
-	}
-
-	public static String extract(String target, String string, String string2) {
-		int pos = target.indexOf(string);
+	public static String extract(final String target, final String string,
+			final String string2) {
+		final int pos = target.indexOf(string);
 		if (pos == -1)
 			return "";
-		int e = pos + string.length();
-		int pos2 = target.indexOf(string2, e);
+		final int e = pos + string.length();
+		final int pos2 = target.indexOf(string2, e);
 		if (pos2 == -1)
 			return "";
 
@@ -83,18 +46,59 @@ public class NetResponse {
 	 * @param string
 	 * @return
 	 */
-	public static List<String> rextract(String data, String string,
-			boolean dotall) {
-		Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL) : Pattern
-				.compile(string);
-		Matcher m = p.matcher(data);
-		List<String> ret = new ArrayList<String>();
+	public static List<String> rextract(final String data, final String string,
+			final boolean dotall) {
+		final Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL)
+				: Pattern.compile(string);
+		final Matcher m = p.matcher(data);
+		final List<String> ret = new ArrayList<String>();
 
 		while (m.find()) {
-			for (int i = 0; i < m.groupCount() + 1; i++)
+			for (int i = 0; i < m.groupCount() + 1; i++) {
 				ret.add(m.group(i));
+			}
 		}
 
 		return ret;
+	}
+
+	public HttpGet request;
+	public List<Header> responseHeaders;
+	public String responseBody;
+	public StatusLine responseStatusLine;
+	public HttpEntity responseEntity;
+	public String responseType;
+
+	public BufferedInputStream responseStream;
+
+	public List<Header> requestHeaders;
+
+	public String extract(final String s1, final String s2) {
+		return extract(responseBody, s1, s2);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+
+		b.append(request);
+		for (final Header x : requestHeaders) {
+			b.append(x);
+			b.append("\n");
+		}
+		b.append("\n");
+		b.append("type: " + responseType);
+		b.append("\n");
+		for (final Header x : responseHeaders) {
+			b.append(x);
+			b.append("\n");
+		}
+		b.append("size: " + responseBody.length());
+		b.append("\n");
+		b.append("====");
+		// b.append(responseBody);
+		b.append("====");
+
+		return b.toString();
 	}
 }

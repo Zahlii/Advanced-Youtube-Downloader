@@ -20,6 +20,55 @@ public class Launcher {
 	private static DownloadFrame mainFrame;
 	private static boolean isDefault;
 
+	public static String getFlag(final String f) {
+		for (int i = 0, l = args.length; i < l; i++) {
+			final String a = args[i];
+			if (f.equals(a) || a.contains(f) && i + 1 < l)
+				return args[i + 1];
+		}
+		return null;
+	}
+
+	private static void handleFiles(final File[] files) {
+
+		out.println("Handling " + files.length + " files.");
+		for (final File f : files) {
+			if (!f.canWrite()) {
+				out.println("Skipping " + f.getAbsolutePath()
+						+ " because it can't be written");
+				continue;
+			}
+
+			Queue.getInstance().addEntry(new QueueEntry(f));
+		}
+	}
+
+	public static boolean hasFlag(final String f) {
+		for (final String a : args) {
+			if (f.equals(a) || a.contains(f))
+				return true;
+		}
+		return false;
+	}
+
+	private static void launch() {
+		try {
+			UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+		} catch (final UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					mainFrame = new DownloadFrame();
+				} catch (final Exception e) {
+					Logging.log("failed to start program", e);
+				}
+			}
+		});
+	}
+
 	public static void main(final String[] args) {
 		Launcher.args = args;
 		if (hasFlag("-h")) {
@@ -104,54 +153,5 @@ public class Launcher {
 				}
 			}
 		}
-	}
-
-	private static void handleFiles(final File[] files) {
-
-		out.println("Handling " + files.length + " files.");
-		for (final File f : files) {
-			if (!f.canWrite()) {
-				out.println("Skipping " + f.getAbsolutePath()
-						+ " because it can't be written");
-				continue;
-			}
-
-			Queue.getInstance().addEntry(new QueueEntry(f));
-		}
-	}
-
-	public static boolean hasFlag(final String f) {
-		for (final String a : args) {
-			if (f.equals(a) || a.contains(f))
-				return true;
-		}
-		return false;
-	}
-
-	public static String getFlag(final String f) {
-		for (int i = 0, l = args.length; i < l; i++) {
-			final String a = args[i];
-			if (f.equals(a) || a.contains(f) && (i + 1) < l)
-				return args[i + 1];
-		}
-		return null;
-	}
-
-	private static void launch() {
-		try {
-			UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
-		} catch (final UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					mainFrame = new DownloadFrame();
-				} catch (final Exception e) {
-					Logging.log("failed to start program", e);
-				}
-			}
-		});
 	}
 }

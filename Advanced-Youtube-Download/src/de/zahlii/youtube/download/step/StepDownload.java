@@ -9,7 +9,7 @@ import de.zahlii.youtube.download.cli.ProcessAdapter;
 
 public class StepDownload extends Step {
 
-	public StepDownload(QueueEntry entry) {
+	public StepDownload(final QueueEntry entry) {
 		super(
 				entry,
 				new StepDescriptor(
@@ -19,42 +19,42 @@ public class StepDownload extends Step {
 
 	@Override
 	public void doStep() {
-		ProcessBuilder n = new ProcessBuilder(
+		final ProcessBuilder n = new ProcessBuilder(
 				ConfigManager.YOUTUBE_DL.getAbsolutePath(), "-o",
 				ConfigManager.TEMP_DIR.getAbsolutePath() + ConfigManager.DS
 						+ "%(title)s.%(ext)s", entry.getWebURL());
 
-		CLI y = new CLI(n);
+		final CLI y = new CLI(n);
 		y.addProcessListener(new ProcessAdapter() {
 			private int total = 1;
 			private int current = 1;
 
 			@Override
-			public void processLineOut(String line) {
+			public void processLineOut(final String line) {
 				if (DownloadInfo.isProgress(line)) {
-					DownloadInfo dinf = new DownloadInfo(line);
-					double c = dinf.progress / 100.0;
+					final DownloadInfo dinf = new DownloadInfo(line);
+					final double c = dinf.progress / 100.0;
 					double base = (double) (current - 1) / (double) total;
 
 					base += c / total;
-					reportProgress(base);
+					StepDownload.this.reportProgress(base);
 				}
 				// [download] Downloading video #1 of 9
 				if (line.contains("Downloading video #")) {
-					String[] p = line.split("video #")[1].split(" of ");
+					final String[] p = line.split("video #")[1].split(" of ");
 					current = Integer.parseInt(p[0]);
 					total = Integer.parseInt(p[1]);
 				}
 				if (line.contains("[download]")
 						&& line.contains("Destination:")) {
-					String p = line.split("Destination:")[1].trim();
-					entry.addDownloadTempFile(new File(p));
+					final String p = line.split("Destination:")[1].trim();
+					StepDownload.this.entry.addDownloadTempFile(new File(p));
 				}
 				if (line.contains("[download]")
 						&& line.contains("has already been")) {
 					String p = line.split("download")[1].substring(2);
 					p = p.split("has already been")[0].trim();
-					entry.addDownloadTempFile(new File(p));
+					StepDownload.this.entry.addDownloadTempFile(new File(p));
 				}
 			}
 		});

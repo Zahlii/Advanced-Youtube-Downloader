@@ -24,94 +24,42 @@ public class Logging {
 
 	/**
 	 * 
-	 * logs a message with it's timestamp
+	 * log into a file
 	 * 
 	 * @author jfruehau
 	 * 
-	 * @param message
-	 *            message string
-	 */
-	public static void log(String message) {
-		StackTraceElement s = Thread.currentThread().getStackTrace()[2];
-
-		String cls = s.getClassName();
-		String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
-
-		String red = padRight(
-				shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
-						+ ")", 35);
-
-		String msg = getTimeStamp() + " - [@ " + red + "] " + message;
-		System.err.println(msg);
-		appendString("log.txt", msg);
-	}
-
-	/**
-	 * 
-	 * logs a message with a given amount of tabs at the beginning
-	 * 
-	 * @author jfruehau
-	 * 
-	 * @param message
-	 * @param level
-	 */
-	public static void log(String message, int level) {
-		StringBuilder sb = new StringBuilder();
-		while (level-- > 0) {
-			sb.append("\t");
-		}
-		log(sb.toString() + message);
-	}
-
-	/**
-	 * 
-	 * logs a message and an exception
-	 * 
-	 * @author jfruehau
-	 * 
-	 * @param message
-	 *            message string
+	 * @param file
 	 * @param e
-	 *            exception to be logged
 	 */
-	public static void log(String message, Exception e) {
-		StackTraceElement s = Thread.currentThread().getStackTrace()[2];
+	private static void appendException(final String file, final Exception e) {
+		final String f = getPathName() + "/" + file;
 
-		String cls = s.getClassName();
-		String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
-
-		String red = padRight(
-				shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
-						+ ")", 35);
-		log(message + "[ " + e.getClass().getSimpleName() + " - "
-				+ e.getMessage() + " ] from " + red);
-
-		if (!printStackTrace) {
-			return;
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(
+				new FileWriter(f, true)))) {
+			e.printStackTrace(out);
+		} catch (final IOException e1) {
+			Logging.log("failed writing into " + f, e);
 		}
-
-		appendException("log.txt", e);
-
-	}
-
-	public static String padRight(String s, int n) {
-		return String.format("%1$-" + n + "s", s);
 	}
 
 	/**
 	 * 
-	 * get the formatted time
+	 * log into a file
 	 * 
 	 * @author jfruehau
 	 * 
-	 * @return a timestamp
+	 * @param file
+	 * @param text
 	 */
-	private static String getTimeStamp() {
+	private static void appendString(final String file, final String text) {
+		final String f = getPathName() + "/" + file;
 
-		Date d = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS dd.MM.yyyy");
-
-		return df.format(d);
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(
+				new FileWriter(f, true)))) {
+			out.println(text);
+		} catch (final IOException e) {
+			Logging.log("failed writing into " + f, e);
+		}
 	}
 
 	/**
@@ -126,14 +74,14 @@ public class Logging {
 		File f = new File(Logging.class.getProtectionDomain().getCodeSource()
 				.getLocation().getPath());
 
-		String sep = System.getProperty("file.separator");
+		final String sep = System.getProperty("file.separator");
 
 		if (f.getAbsolutePath().contains(sep + "bin")
 				|| f.getAbsolutePath().contains(".jar")) {
 			f = f.getParentFile();
 		}
 
-		String p = f.getAbsolutePath().replace("%20", " ");
+		final String p = f.getAbsolutePath().replace("%20", " ");
 
 		if (!isSet) {
 			System.out.println("basedir is " + p);
@@ -144,42 +92,94 @@ public class Logging {
 
 	/**
 	 * 
-	 * log into a file
+	 * get the formatted time
 	 * 
 	 * @author jfruehau
 	 * 
-	 * @param file
-	 * @param text
+	 * @return a timestamp
 	 */
-	private static void appendString(String file, String text) {
-		String f = getPathName() + "/" + file;
+	private static String getTimeStamp() {
 
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(
-				new FileWriter(f, true)))) {
-			out.println(text);
-		} catch (IOException e) {
-			Logging.log("failed writing into " + f, e);
-		}
+		final Date d = new Date();
+		final SimpleDateFormat df = new SimpleDateFormat(
+				"HH:mm:ss.SSS dd.MM.yyyy");
+
+		return df.format(d);
 	}
 
 	/**
 	 * 
-	 * log into a file
+	 * logs a message with it's timestamp
 	 * 
 	 * @author jfruehau
 	 * 
-	 * @param file
-	 * @param e
+	 * @param message
+	 *            message string
 	 */
-	private static void appendException(String file, Exception e) {
-		String f = getPathName() + "/" + file;
+	public static void log(final String message) {
+		final StackTraceElement s = Thread.currentThread().getStackTrace()[2];
 
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(
-				new FileWriter(f, true)))) {
-			e.printStackTrace(out);
-		} catch (IOException e1) {
-			Logging.log("failed writing into " + f, e);
+		final String cls = s.getClassName();
+		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1,
+				cls.length());
+
+		final String red = padRight(shortCls + "." + s.getMethodName() + "("
+				+ s.getLineNumber() + ")", 35);
+
+		final String msg = getTimeStamp() + " - [@ " + red + "] " + message;
+		System.err.println(msg);
+		appendString("log.txt", msg);
+	}
+
+	/**
+	 * 
+	 * logs a message and an exception
+	 * 
+	 * @author jfruehau
+	 * 
+	 * @param message
+	 *            message string
+	 * @param e
+	 *            exception to be logged
+	 */
+	public static void log(final String message, final Exception e) {
+		final StackTraceElement s = Thread.currentThread().getStackTrace()[2];
+
+		final String cls = s.getClassName();
+		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1,
+				cls.length());
+
+		final String red = padRight(shortCls + "." + s.getMethodName() + "("
+				+ s.getLineNumber() + ")", 35);
+		log(message + "[ " + e.getClass().getSimpleName() + " - "
+				+ e.getMessage() + " ] from " + red);
+
+		if (!printStackTrace)
+			return;
+
+		appendException("log.txt", e);
+
+	}
+
+	/**
+	 * 
+	 * logs a message with a given amount of tabs at the beginning
+	 * 
+	 * @author jfruehau
+	 * 
+	 * @param message
+	 * @param level
+	 */
+	public static void log(final String message, int level) {
+		final StringBuilder sb = new StringBuilder();
+		while (level-- > 0) {
+			sb.append("\t");
 		}
+		log(sb.toString() + message);
+	}
+
+	public static String padRight(final String s, final int n) {
+		return String.format("%1$-" + n + "s", s);
 	}
 
 }

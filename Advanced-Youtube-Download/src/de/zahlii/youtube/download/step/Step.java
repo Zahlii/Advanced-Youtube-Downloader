@@ -20,7 +20,11 @@ public abstract class Step {
 
 	public Step(final QueueEntry entry, final StepDescriptor descr) {
 		this.entry = entry;
-		this.stepDescriptor = descr;
+		stepDescriptor = descr;
+	}
+
+	public void addListener(final StepListener l) {
+		stepListeners.add(l);
 	}
 
 	/**
@@ -31,22 +35,26 @@ public abstract class Step {
 	public abstract void doStep();
 
 	public StepDescriptor getStepDescriptor() {
-		return this.stepDescriptor;
+		return stepDescriptor;
 	}
 
-	public void addListener(final StepListener l) {
-		this.stepListeners.add(l);
-	}
-
-	public void removeListener(final StepListener l) {
-		this.stepListeners.remove(l);
-	}
+	/**
+	 * This should return the results of the Step, such as analyzing results or
+	 * file paths affected, for representation in the UI.
+	 * 
+	 * @return
+	 */
+	public abstract String getStepResults();
 
 	/**
 	 * Informs the current queue entry to start the next Step.
 	 */
 	protected void nextStep() {
-		this.entry.nextStep();
+		entry.nextStep();
+	}
+
+	public void removeListener(final StepListener l) {
+		stepListeners.remove(l);
 	}
 
 	/**
@@ -57,17 +65,9 @@ public abstract class Step {
 	 *            current progress, ranging within [0,1]
 	 */
 	protected void reportProgress(final double progress) {
-		for (final StepListener l : this.stepListeners) {
+		for (final StepListener l : stepListeners) {
 			l.stepProgress(progress);
 		}
 	}
-
-	/**
-	 * This should return the results of the Step, such as analyzing results or
-	 * file paths affected, for representation in the UI.
-	 * 
-	 * @return
-	 */
-	public abstract String getStepResults();
 
 }

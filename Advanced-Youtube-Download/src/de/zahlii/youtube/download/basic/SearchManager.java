@@ -9,6 +9,15 @@ import radams.gracenote.webapi.GracenoteWebAPI;
 
 public class SearchManager {
 	private static SearchManager instance;
+
+	public static SearchManager getInstance() {
+		if (instance == null) {
+			instance = new SearchManager();
+		}
+
+		return instance;
+	}
+
 	private GracenoteWebAPI api;
 
 	private SearchManager() {
@@ -16,25 +25,18 @@ public class SearchManager {
 			api = new GracenoteWebAPI("10483968",
 					"4EA6AAF67950AC0A07567F7195D7405B",
 					"264115384938188959-9606FB329A8E8D0ECF20D5E0C1BF71B0");
-		} catch (GracenoteException e) {
+		} catch (final GracenoteException e) {
 			Logging.log("failed connecting to gracenote API", e);
 		}
 	}
 
-	public static SearchManager getInstance() {
-		if (instance == null)
-			instance = new SearchManager();
-
-		return instance;
-	}
-
-	private String _cutOff(String tar, String search) {
+	private String _cutOff(final String tar, final String search) {
 		return tar.split(search)[0].trim();
 	}
 
 	private String _niceName(String trim) {
-		Pattern p = Pattern.compile("\\(.*\\)");
-		Matcher m = p.matcher(trim);
+		final Pattern p = Pattern.compile("\\(.*\\)");
+		final Matcher m = p.matcher(trim);
 		trim = m.replaceAll("");
 
 		trim = _cutOff(trim, "feat. ");
@@ -43,8 +45,8 @@ public class SearchManager {
 		trim = _cutOff(trim, "vs. ");
 		// trim = _cutOff(trim, " and ");
 		trim = _cutOff(trim, " & ").replace("&", "");
-		Pattern p1 = Pattern.compile("\\.");
-		Matcher m1 = p1.matcher(trim.trim());
+		final Pattern p1 = Pattern.compile("\\.");
+		final Matcher m1 = p1.matcher(trim.trim());
 		trim = m1.replaceAll("");
 		return trim.trim();
 	}

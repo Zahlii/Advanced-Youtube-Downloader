@@ -29,80 +29,45 @@ public class StepMetaSearch extends Step {
 
 	@Override
 	public void doStep() {
-		final String baseName = FilenameUtils.getBaseName(this.entry
+		final String baseName = FilenameUtils.getBaseName(entry
 				.getDownloadTempFile().getAbsolutePath());
 
 		final String[] parts = baseName.split("-");
 
 		switch (parts.length) {
 		case 1:
-			this.title = parts[0].trim();
+			title = parts[0].trim();
 			break;
 		case 2:
-			this.artist = parts[0].trim();
-			this.title = parts[1].trim();
+			artist = parts[0].trim();
+			title = parts[1].trim();
 			break;
 		case 3:
-			this.artist = parts[0].trim();
-			this.title = parts[1].trim();
-			this.album = parts[2].trim();
+			artist = parts[0].trim();
+			title = parts[1].trim();
+			album = parts[2].trim();
 			break;
 		default:
 			final int n = parts.length - 3;
-			this.artist = parts[n].trim();
-			this.title = parts[n + 1].trim();
-			this.album = parts[n + 2].trim();
+			artist = parts[n].trim();
+			title = parts[n + 1].trim();
+			album = parts[n + 2].trim();
 		}
 
-		this.handleMetaSearch();
+		handleMetaSearch();
 	}
 
 	@Override
 	public String getStepResults() {
-		return this.d == null ? "No Gracenote match found."
-				: "Found possible match with songtitle " + this.d.getTitle()
-						+ ".";
-	}
-
-	private void handleMetaSearch() {
-
-		if (SwingUtilities.isEventDispatchThread()) {
-			final SearchFrame sf = new SearchFrame(this.artist, this.title,
-					this.album);
-			sf.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(final ActionEvent arg0) {
-					if (arg0 == null) {
-						StepMetaSearch.this.handleMetaResult();
-					} else {
-						StepMetaSearch.this.d = SearchManager.getInstance()
-								.searchForSong(sf.getArtist(), sf.getAlbum(),
-										sf.getSongTitle());
-						StepMetaSearch.this.handleMetaResult();
-					}
-				}
-
-			});
-			sf.setVisible(true);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					StepMetaSearch.this.handleMetaSearch();
-
-				}
-
-			});
-		}
+		return d == null ? "No Gracenote match found."
+				: "Found possible match with songtitle " + d.getTitle() + ".";
 	}
 
 	private void handleMetaResult() {
 		if (SwingUtilities.isEventDispatchThread()) {
-			final InfoFrame i = new InfoFrame(this.entry, this.d);
-			if (this.d == null) {
-				i.fillInfo(this.artist, this.title, this.album);
+			final InfoFrame i = new InfoFrame(entry, d);
+			if (d == null) {
+				i.fillInfo(artist, title, album);
 			}
 			i.addActionListener(new ActionListener() {
 
@@ -131,6 +96,39 @@ public class StepMetaSearch extends Step {
 
 	}
 
+	private void handleMetaSearch() {
+
+		if (SwingUtilities.isEventDispatchThread()) {
+			final SearchFrame sf = new SearchFrame(artist, title, album);
+			sf.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(final ActionEvent arg0) {
+					if (arg0 == null) {
+						StepMetaSearch.this.handleMetaResult();
+					} else {
+						d = SearchManager.getInstance().searchForSong(
+								sf.getArtist(), sf.getAlbum(),
+								sf.getSongTitle());
+						StepMetaSearch.this.handleMetaResult();
+					}
+				}
+
+			});
+			sf.setVisible(true);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					StepMetaSearch.this.handleMetaSearch();
+
+				}
+
+			});
+		}
+	}
+
 	private void saveMetaData(final InfoFrame fr) {
 		final Map<FieldKey, String> data = new HashMap<FieldKey, String>();
 		data.put(FieldKey.ARTIST, fr.getArtist());
@@ -145,14 +143,14 @@ public class StepMetaSearch extends Step {
 
 		data.put(FieldKey.GENRE, fr.getGenre());
 		data.put(FieldKey.TEMPO, fr.getTempo());
-		data.put(FieldKey.COMMENT, this.entry.getDownloadTempFile()
+		data.put(FieldKey.COMMENT, entry.getDownloadTempFile()
 				.getAbsolutePath());
 
-		this.entry.getStepInfo().put("meta.data", data);
+		entry.getStepInfo().put("meta.data", data);
 
 		fr.getTagEditor().writeAllFields(data);
 		fr.getTagEditor().writeArtwork(fr.getArtworkImage());
 		fr.getTagEditor().commit();
-		this.nextStep();
+		nextStep();
 	}
 }

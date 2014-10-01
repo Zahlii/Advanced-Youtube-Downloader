@@ -6,17 +6,17 @@ public class GracenoteMetadataOET {
 	private String _id = "";
 	private String _text = "";
 
-	public GracenoteMetadataOET(String id, String text) {
-		this._id = id;
-		this._text = text;
+	public GracenoteMetadataOET(final String id, final String text) {
+		_id = id;
+		_text = text;
 	}
 
 	public String getID() {
-		return this._id;
+		return _id;
 	}
 
 	public String getText() {
-		return this._text;
+		return _text;
 	}
 
 	public void print() {
@@ -25,6 +25,6 @@ public class GracenoteMetadataOET {
 
 	@Override
 	public String toString() {
-		return "OET id:" + this._id + "| Text:" + this._text;
+		return "OET id:" + _id + "| Text:" + _text;
 	}
 }

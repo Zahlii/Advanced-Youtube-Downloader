@@ -27,7 +27,7 @@ public class StepSilenceDetect extends Step {
 		final List<String> meta = new ArrayList<String>();
 		meta.add(ConfigManager.FFMPEG.getAbsolutePath());
 		meta.add("-i");
-		meta.add(this.entry.getDownloadTempFile().getAbsolutePath());
+		meta.add(entry.getDownloadTempFile().getAbsolutePath());
 		meta.add("-af");
 		meta.add("silencedetect=n=-50dB:d=0.5");
 		meta.add("-f");
@@ -50,7 +50,7 @@ public class StepSilenceDetect extends Step {
 				if (SilenceInfo.isSilenceInfo(line)) {
 					final SilenceInfo si = new SilenceInfo(line);
 					if (si.isValid()) {
-						StepSilenceDetect.this.silence.add(si);
+						silence.add(si);
 					}
 				}
 			}
@@ -64,24 +64,24 @@ public class StepSilenceDetect extends Step {
 		boolean cutStart = false, cutEnd = false;
 
 		// no silence at all
-		if (this.silence.size() == 0) {
+		if (silence.size() == 0) {
 			// skip
-		} else if (this.silence.size() == 1) {
+		} else if (silence.size() == 1) {
 			// might be at start or end
-			final SilenceInfo f = this.silence.get(0);
+			final SilenceInfo f = silence.get(0);
 			if (f.getTimeStart() == -1) { // only silence_end was given -> is at
 											// the start
 				cutStart = true;
 				firstSilenceEnd = f.getTimeEnd();
 			} else {
-				lastSilenceStart = this.silence.get(0).getTimeStart();
+				lastSilenceStart = silence.get(0).getTimeStart();
 				cutEnd = true;
 			}
 
 		} else {
 			// silence at all ends
-			final SilenceInfo f = this.silence.get(0);
-			final SilenceInfo l = this.silence.get(this.silence.size() - 1);
+			final SilenceInfo f = silence.get(0);
+			final SilenceInfo l = silence.get(silence.size() - 1);
 			firstSilenceEnd = f.getTimeEnd();
 			lastSilenceStart = l.getTimeStart();
 
@@ -89,34 +89,34 @@ public class StepSilenceDetect extends Step {
 			cutEnd = lastSilenceStart > 0;
 		}
 
-		this.entry.getStepInfo().put("silence.start", cutStart);
+		entry.getStepInfo().put("silence.start", cutStart);
 
-		if (this.silence.size() > 0) {
-			Logging.log("found silence: " + this.silence);
+		if (silence.size() > 0) {
+			Logging.log("found silence: " + silence);
 		}
 		if (cutStart) {
-			this.entry.getStepInfo().put("silence.start.time", firstSilenceEnd);
+			entry.getStepInfo().put("silence.start.time", firstSilenceEnd);
 		}
 
-		this.entry.getStepInfo().put("silence.end", cutEnd);
+		entry.getStepInfo().put("silence.end", cutEnd);
 		if (cutEnd) {
-			this.entry.getStepInfo().put("silence.end.time", lastSilenceStart);
+			entry.getStepInfo().put("silence.end.time", lastSilenceStart);
 		}
 
-		this.nextStep();
+		nextStep();
 	}
 
 	@Override
 	public String getStepResults() {
-		final String ss = (boolean) this.entry.getStepInfo().get(
-				"silence.start") ? "Silence at Start: "
-				+ this.entry.getStepInfo().get("silence.start.time") : "";
-		final String se = (boolean) this.entry.getStepInfo().get("silence.end") ? "Silence at End: "
-				+ this.entry.getStepInfo().get("silence.end.time")
+		final String ss = (boolean) entry.getStepInfo().get("silence.start") ? "Silence at Start: "
+				+ entry.getStepInfo().get("silence.start.time")
+				: "";
+		final String se = (boolean) entry.getStepInfo().get("silence.end") ? "Silence at End: "
+				+ entry.getStepInfo().get("silence.end.time")
 				: "";
 
 		String r = ss;
-		r += se.equals("") ? "" : (ss.equals("") ? se : ", " + se);
+		r += se.equals("") ? "" : ss.equals("") ? se : ", " + se;
 
 		return r.equals("") ? "No silence to remove." : r + ".";
 	}

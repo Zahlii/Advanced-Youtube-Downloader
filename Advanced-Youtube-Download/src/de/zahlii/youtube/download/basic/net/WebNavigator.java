@@ -33,14 +33,15 @@ import de.zahlii.youtube.download.basic.Logging;
 public class WebNavigator {
 	public static final String IP = "79.219.97.90";
 
+	private static WebNavigator instance;
+
 	public static WebNavigator getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new WebNavigator();
+		}
 
 		return instance;
 	}
-
-	private static WebNavigator instance;
 
 	private URIBuilder host;
 	private CookieStore cookie;
@@ -48,7 +49,7 @@ public class WebNavigator {
 	private HttpClient client;
 
 	private WebNavigator() {
-		RequestConfig globalConfig = RequestConfig.custom()
+		final RequestConfig globalConfig = RequestConfig.custom()
 				.setCookieSpec(CookieSpecs.BEST_MATCH).build();
 
 		host = new URIBuilder().setScheme("https").setHost("www.youtube.com");
@@ -76,14 +77,15 @@ public class WebNavigator {
 					public void process(final HttpResponse response,
 							final HttpContext context) throws HttpException,
 							IOException {
-						HttpEntity entity = response.getEntity();
+						final HttpEntity entity = response.getEntity();
 						if (entity != null) {
-							Header ceheader = entity.getContentEncoding();
+							final Header ceheader = entity.getContentEncoding();
 							if (ceheader != null) {
-								HeaderElement[] codecs = ceheader.getElements();
-								for (int i = 0; i < codecs.length; i++) {
-									if (codecs[i].getName().equalsIgnoreCase(
-											"gzip")) {
+								final HeaderElement[] codecs = ceheader
+										.getElements();
+								for (final HeaderElement codec : codecs) {
+									if (codec.getName()
+											.equalsIgnoreCase("gzip")) {
 										response.setEntity(new GzipDecompressingEntity(
 												response.getEntity()));
 										return;
@@ -97,14 +99,18 @@ public class WebNavigator {
 
 	}
 
+	public List<Cookie> getCookies() {
+		return context.getCookieStore().getCookies();
+	}
+
 	public URIBuilder getHost() {
 		return host;
 	}
 
-	public NetResponse navigate(URI uri) {
-		NetResponse r = new NetResponse();
+	public NetResponse navigate(final URI uri) {
+		final NetResponse r = new NetResponse();
 
-		HttpGet httpGet = new HttpGet(uri);
+		final HttpGet httpGet = new HttpGet(uri);
 		httpGet.setHeader("accept-language",
 				"de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4");
 		httpGet.setHeader(
@@ -114,10 +120,10 @@ public class WebNavigator {
 				"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 
 		try {
-			BasicResponseHandler handle = new BasicResponseHandler();
+			final BasicResponseHandler handle = new BasicResponseHandler();
 
-			HttpResponse response = client.execute(httpGet);
-			String body = handle.handleResponse(response);
+			final HttpResponse response = client.execute(httpGet);
+			final String body = handle.handleResponse(response);
 			r.request = httpGet;
 			r.requestHeaders = Arrays.asList(r.request.getAllHeaders());
 			r.responseEntity = response.getEntity();
@@ -125,28 +131,24 @@ public class WebNavigator {
 			r.responseHeaders = Arrays.asList(response.getAllHeaders());
 			r.responseStatusLine = response.getStatusLine();
 			r.responseBody = body;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Logging.log("failed getting net response", e);
 		}
 		return r;
 	}
 
-	public InputStream navigateStream(String uri) {
-		HttpGet httpGet = new HttpGet(uri);
+	public InputStream navigateStream(final String uri) {
+		final HttpGet httpGet = new HttpGet(uri);
 		httpGet.setHeader(
 				"user-agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");
 
 		try {
-			HttpResponse r = client.execute(httpGet, context);
+			final HttpResponse r = client.execute(httpGet, context);
 			return r.getEntity().getContent();
 		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public List<Cookie> getCookies() {
-		return context.getCookieStore().getCookies();
 	}
 }

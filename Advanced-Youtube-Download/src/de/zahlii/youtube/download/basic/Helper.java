@@ -12,33 +12,34 @@ import javax.imageio.ImageIO;
 import de.zahlii.youtube.download.basic.net.WebNavigator;
 
 public class Helper {
-	public static String getFileID(String webURL) {
+	public static BufferedImage downloadImage(final String url) {
+		final InputStream iSReader = WebNavigator.getInstance().navigateStream(
+				url);
 		try {
-			byte[] bytesOfMessage = webURL.getBytes("UTF-8");
+			return ImageIO.read(iSReader);
+		} catch (final IOException e) {
+			Logging.log("failed to download artwork", e);
+			return new BufferedImage(500, 500, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+	}
 
-			MessageDigest md = MessageDigest.getInstance("MD5");
+	public static String getFileID(final String webURL) {
+		try {
+			final byte[] bytesOfMessage = webURL.getBytes("UTF-8");
 
-			byte[] thedigest = md.digest(bytesOfMessage);
+			final MessageDigest md = MessageDigest.getInstance("MD5");
+
+			final byte[] thedigest = md.digest(bytesOfMessage);
 			return new String(thedigest, "UTF-8");
 		} catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
 			return sanitize(webURL);
 		}
 	}
 
-	public static String sanitize(String main) {
+	public static String sanitize(final String main) {
 		return main.replace("<", "").replace(">", "").replace(":", "")
 				.replace("/", "").replace("\\", "").replace("|", "")
 				.replace("?", "").replace("*", "").replace("\"", "")
 				.replace("\r", "").replace("\n", "");
-	}
-
-	public static BufferedImage downloadImage(String url) {
-		InputStream iSReader = WebNavigator.getInstance().navigateStream(url);
-		try {
-			return ImageIO.read(iSReader);
-		} catch (IOException e) {
-			Logging.log("failed to download artwork", e);
-			return new BufferedImage(500, 500, BufferedImage.TYPE_4BYTE_ABGR);
-		}
 	}
 }

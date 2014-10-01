@@ -13,18 +13,6 @@ import de.zahlii.youtube.download.basic.Logging;
 
 public class CLI {
 
-	private BufferedReader in;
-	private BufferedWriter out;
-	private final ProcessBuilder b;
-	private Process p;
-	private final List<ProcessListener> listener;
-
-	public CLI(final ProcessBuilder b) {
-		this.b = b;
-		this.listener = new ArrayList<ProcessListener>();
-
-	}
-
 	private static void printArgs(final List<String> list) {
 		final List<String> copy = new ArrayList<String>(list);
 		for (int i = 0, l = copy.size(); i < l; i++) {
@@ -40,46 +28,29 @@ public class CLI {
 		Logging.log("executing\n\t" + copy.toString());
 	}
 
-	public void run() {
-		printArgs(this.b.command());
-		try {
-			this.b.redirectErrorStream(true);
-			this.p = this.b.start();
-			this.in = new BufferedReader(new InputStreamReader(
-					this.p.getInputStream()));
-			this.out = new BufferedWriter(new OutputStreamWriter(
-					this.p.getOutputStream()));
+	private BufferedReader in;
+	private BufferedWriter out;
+	private final ProcessBuilder b;
+	private Process p;
 
-			while (this.processInLine()) {
+	private final List<ProcessListener> listener;
 
-			}
-			for (final ProcessListener l : this.listener) {
-				l.processStop();
-			}
-		} catch (final IOException e) {
-			Logging.log("CLI run failed", e);
-		}
+	public CLI(final ProcessBuilder b) {
+		this.b = b;
+		listener = new ArrayList<ProcessListener>();
+
 	}
 
-	private void processOutLine(final String line) throws IOException {
-		String write = null;
-		Logging.log("[CLI IN]\t" + line);
-
-		for (final ProcessListener l : this.listener) {
-			write = l.processLineIn(line);
-			break;
-		}
-		if (write != null) {
-			this.out.write(write);
-		}
+	public void addProcessListener(final ProcessListener l) {
+		listener.add(l);
 	}
 
 	private boolean processInLine() throws IOException {
 		String line;
 
-		if ((line = this.in.readLine()) != null) {
+		if ((line = in.readLine()) != null) {
 			// Logging.log("[CLI]\t" + line);
-			for (final ProcessListener l : this.listener) {
+			for (final ProcessListener l : listener) {
 				l.processLineOut(line);
 			}
 			return true;
@@ -87,12 +58,28 @@ public class CLI {
 		return false;
 	}
 
-	public void addProcessListener(final ProcessListener l) {
-		this.listener.add(l);
+	public void removeProcessListener(final ProcessListener l) {
+		listener.remove(l);
 	}
 
-	public void removeProcessListener(final ProcessListener l) {
-		this.listener.remove(l);
+	public void run() {
+		printArgs(b.command());
+		try {
+			b.redirectErrorStream(true);
+			p = b.start();
+			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			out = new BufferedWriter(
+					new OutputStreamWriter(p.getOutputStream()));
+
+			while (processInLine()) {
+
+			}
+			for (final ProcessListener l : listener) {
+				l.processStop();
+			}
+		} catch (final IOException e) {
+			Logging.log("CLI run failed", e);
+		}
 	}
 
 }

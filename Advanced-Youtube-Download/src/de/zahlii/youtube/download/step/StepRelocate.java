@@ -31,38 +31,36 @@ public class StepRelocate extends Step {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void doStep() {
-		if ((boolean) this.entry.getStepInfo().get("skipped")) {
+		if ((boolean) entry.getStepInfo().get("skipped")) {
 			Logging.log("Skipping relocate");
-			this.nextStep();
+			nextStep();
 			return;
 		}
-		this.data = (Map<FieldKey, String>) (this.entry.getStepInfo()
-				.get("meta.data"));
+		data = (Map<FieldKey, String>) entry.getStepInfo().get("meta.data");
 
 		final String dirPath = ConfigManager.getInstance().getConfig(
 				ConfigKey.DIR_TARGET, ConfigManager.TEMP_DIR.getAbsolutePath());
 
-		if (this.data != null) {
+		if (data != null) {
 			String convention = ConfigManager.getInstance().getConfig(
 					ConfigKey.FILENAME_CONVENTION, "%artist - %title");
 			// %album, %title, %artist, %track, %tracktotal, %year
 
-			convention = this.r(convention, "%album", FieldKey.ALBUM);
-			convention = this.r(convention, "%title", FieldKey.TITLE);
-			convention = this.r(convention, "%artist", FieldKey.ARTIST);
-			convention = this.r(convention, "%track", FieldKey.TRACK);
-			convention = this
-					.r(convention, "%tracktotal", FieldKey.TRACK_TOTAL);
-			convention = this.r(convention, "%year", FieldKey.YEAR);
+			convention = r(convention, "%album", FieldKey.ALBUM);
+			convention = r(convention, "%title", FieldKey.TITLE);
+			convention = r(convention, "%artist", FieldKey.ARTIST);
+			convention = r(convention, "%track", FieldKey.TRACK);
+			convention = r(convention, "%tracktotal", FieldKey.TRACK_TOTAL);
+			convention = r(convention, "%year", FieldKey.YEAR);
 
-			this.finalFile = new File(dirPath + ConfigManager.DS + convention
-					+ this.entry.getExtension());
+			finalFile = new File(dirPath + ConfigManager.DS + convention
+					+ entry.getExtension());
 		} else {
-			this.finalFile = new File(dirPath + ConfigManager.DS
-					+ this.entry.getDownloadTempFile().getName());
+			finalFile = new File(dirPath + ConfigManager.DS
+					+ entry.getDownloadTempFile().getName());
 		}
 
-		if (this.finalFile.exists()) {
+		if (finalFile.exists()) {
 
 			final Runnable r = new Runnable() {
 
@@ -80,8 +78,7 @@ public class StepRelocate extends Step {
 								.showConfirmDialog(
 										null,
 										"The file "
-												+ StepRelocate.this.finalFile
-														.getAbsolutePath()
+												+ finalFile.getAbsolutePath()
 												+ " already exists.\nDo you want to overwrite it?",
 										"File exists",
 										JOptionPane.YES_NO_OPTION,
@@ -92,17 +89,15 @@ public class StepRelocate extends Step {
 					}
 
 					if (answer == JOptionPane.OK_OPTION) {
-						FileUtils.deleteQuietly(StepRelocate.this.finalFile);
+						FileUtils.deleteQuietly(finalFile);
 						try {
 							FileUtils.moveFile(StepRelocate.this.entry
-									.getConvertTempFile(),
-									StepRelocate.this.finalFile);
+									.getConvertTempFile(), finalFile);
 						} catch (final IOException e) {
 							Logging.log("failed to move file to new location",
 									e);
 						}
-						StepRelocate.this.entry
-								.setFinalMP3File(StepRelocate.this.finalFile);
+						StepRelocate.this.entry.setFinalMP3File(finalFile);
 					} else {
 						// entry.setFinalMP3File(finalFile);
 					}
@@ -117,25 +112,23 @@ public class StepRelocate extends Step {
 			}
 		} else {
 			try {
-				FileUtils.moveFile(this.entry.getConvertTempFile(),
-						this.finalFile);
-				this.entry.setFinalMP3File(this.finalFile);
+				FileUtils.moveFile(entry.getConvertTempFile(), finalFile);
+				entry.setFinalMP3File(finalFile);
 			} catch (final IOException e) {
 				Logging.log("failed to move file to new location", e);
 			}
 		}
 
-		this.nextStep();
-	}
-
-	private String r(final String d, final String s, final FieldKey r) {
-		return d.replace(s, Helper.sanitize(this.data.get(r)));
+		nextStep();
 	}
 
 	@Override
 	public String getStepResults() {
-		return this.finalFile != null ? "Moved to " + this.finalFile.getName()
-				+ "." : "";
+		return finalFile != null ? "Moved to " + finalFile.getName() + "." : "";
+	}
+
+	private String r(final String d, final String s, final FieldKey r) {
+		return d.replace(s, Helper.sanitize(data.get(r)));
 	}
 
 }

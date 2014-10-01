@@ -34,26 +34,38 @@ public class TagEditor {
 	private final QueueEntry entry;
 
 	public TagEditor(final File file, final QueueEntry entry) {
-		this.musicFile = file;
+		musicFile = file;
 		this.entry = entry;
 
 		try {
-			this.song = AudioFileIO.read(this.musicFile);
-			this.head = this.song.getAudioHeader();
-			this.tag = this.song.getTag();
+			song = AudioFileIO.read(musicFile);
+			head = song.getAudioHeader();
+			tag = song.getTag();
 		} catch (IOException | InvalidAudioFrameException | CannotReadException
 				| TagException | ReadOnlyFileException e) {
 			Logging.log("failed loading audio file", e);
-			this.head = null;
-			this.tag = null;
-			this.song = null;
+			head = null;
+			tag = null;
+			song = null;
 		}
+	}
+
+	public void commit() {
+		try {
+			AudioFileIO.write(song);
+		} catch (final CannotWriteException e) {
+			Logging.log("failed committing audio data", e);
+		}
+	}
+
+	public File getFile() {
+		return musicFile;
 	}
 
 	public BufferedImage readArtwork() {
 		int s;
 		try {
-			s = this.tag.getArtworkList().size();
+			s = tag.getArtworkList().size();
 		} catch (final NullPointerException e) {
 			s = 0;
 		}
@@ -61,7 +73,7 @@ public class TagEditor {
 		if (s == 0)
 			return null;
 
-		final Artwork a = this.tag.getFirstArtwork();
+		final Artwork a = tag.getFirstArtwork();
 		final byte[] data = a.getBinaryData();
 		BufferedImage img;
 		try {
@@ -73,58 +85,45 @@ public class TagEditor {
 		}
 	}
 
-	public void writeArtwork(final BufferedImage img) {
-		if (img == null)
-			return;
-		try {
-			final StandardArtwork s = new StandardArtwork();
-
-			ImageIO.write(img, "png", this.entry.getCoverTempFile());
-			s.setFromFile(this.entry.getCoverTempFile());
-			this.tag.deleteArtworkField();
-			this.tag.addField(s);
-		} catch (FieldDataInvalidException | IOException e) {
-			Logging.log("failed to save artwork", e);
-		}
-	}
-
-	public File getFile() {
-		return this.musicFile;
-	}
-
 	public String readField(final FieldKey f) {
 		try {
-			final String s = this.tag.getFirst(f);
+			final String s = tag.getFirst(f);
 			return s == null ? "" : s;
 		} catch (final KeyNotFoundException e) {
 			return "";
 		}
 	}
 
-	public void writeField(final FieldKey f, final String v) {
-		try {
-			this.tag.setField(f, v.replace("\\r", "").trim());
-		} catch (KeyNotFoundException | FieldDataInvalidException e) {
-			Logging.log("failed writing field " + f, e);
-		}
-	}
-
 	public void writeAllFields(final Map<FieldKey, String> fields) {
 		try {
 			for (final Entry<FieldKey, String> e : fields.entrySet()) {
-				this.tag.setField(e.getKey(), e.getValue().replace("\\r", "")
-						.trim());
+				tag.setField(e.getKey(), e.getValue().replace("\\r", "").trim());
 			}
 		} catch (KeyNotFoundException | FieldDataInvalidException e) {
 			Logging.log("failed writing fields", e);
 		}
 	}
 
-	public void commit() {
+	public void writeArtwork(final BufferedImage img) {
+		if (img == null)
+			return;
 		try {
-			AudioFileIO.write(this.song);
-		} catch (final CannotWriteException e) {
-			Logging.log("failed committing audio data", e);
+			final StandardArtwork s = new StandardArtwork();
+
+			ImageIO.write(img, "png", entry.getCoverTempFile());
+			s.setFromFile(entry.getCoverTempFile());
+			tag.deleteArtworkField();
+			tag.addField(s);
+		} catch (FieldDataInvalidException | IOException e) {
+			Logging.log("failed to save artwork", e);
+		}
+	}
+
+	public void writeField(final FieldKey f, final String v) {
+		try {
+			tag.setField(f, v.replace("\\r", "").trim());
+		} catch (KeyNotFoundException | FieldDataInvalidException e) {
+			Logging.log("failed writing field " + f, e);
 		}
 	}
 }
