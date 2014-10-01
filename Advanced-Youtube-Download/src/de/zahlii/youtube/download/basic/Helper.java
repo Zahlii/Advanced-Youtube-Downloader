@@ -13,8 +13,7 @@ import de.zahlii.youtube.download.basic.net.WebNavigator;
 
 public class Helper {
 	public static BufferedImage downloadImage(final String url) {
-		final InputStream iSReader = WebNavigator.getInstance().navigateStream(
-				url);
+		final InputStream iSReader = WebNavigator.getInstance().navigateStream(url);
 		try {
 			return ImageIO.read(iSReader);
 		} catch (final IOException e) {
@@ -37,9 +36,7 @@ public class Helper {
 	}
 
 	public static String sanitize(final String main) {
-		return main.replace("<", "").replace(">", "").replace(":", "")
-				.replace("/", "").replace("\\", "").replace("|", "")
-				.replace("?", "").replace("*", "").replace("\"", "")
-				.replace("\r", "").replace("\n", "");
+		return main.replace("<", "").replace(">", "").replace(":", "").replace("/", "").replace("\\", "").replace("|", "").replace("?", "").replace("*", "").replace("\"", "").replace("\r", "")
+				.replace("\n", "");
 	}
 }

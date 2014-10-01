@@ -8,9 +8,21 @@ import de.zahlii.youtube.download.cli.ProcessAdapter;
 public abstract class FFMPEGTimeProcessListener extends ProcessAdapter {
 	private double timeTotal;
 
+	public abstract void onProgress(double progress);
+
+	@Override
+	public void processLineOut(final String line) {
+		if (line.contains("Duration:")) {
+			timeTotal = getTime(line);
+		}
+		if (line.contains("time=")) {
+			final double time = getTime(line);
+			onProgress(time / timeTotal);
+		}
+	}
+
 	private double getTime(final String line) {
-		final Pattern p = Pattern
-				.compile("(\\d{2,2}):(\\d{2,2}):(\\d{2,2})\\.(\\d{2,2})");
+		final Pattern p = Pattern.compile("(\\d{2,2}):(\\d{2,2}):(\\d{2,2})\\.(\\d{2,2})");
 		final Matcher m = p.matcher(line);
 
 		double r = 0;
@@ -23,18 +35,5 @@ public abstract class FFMPEGTimeProcessListener extends ProcessAdapter {
 			r = hrs * 3600 * 1000 + mins * 60 * 1000 + secs * 1000 + ms;
 		}
 		return r;
-	}
-
-	public abstract void onProgress(double progress);
-
-	@Override
-	public void processLineOut(final String line) {
-		if (line.contains("Duration:")) {
-			timeTotal = getTime(line);
-		}
-		if (line.contains("time=")) {
-			final double time = getTime(line);
-			onProgress(time / timeTotal);
-		}
 	}
 }

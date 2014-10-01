@@ -28,12 +28,11 @@ public class CLI {
 		Logging.log("executing\n\t" + copy.toString());
 	}
 
-	private BufferedReader in;
-	private BufferedWriter out;
 	private final ProcessBuilder b;
-	private Process p;
-
+	private BufferedReader in;
 	private final List<ProcessListener> listener;
+
+	private Process p;
 
 	public CLI(final ProcessBuilder b) {
 		this.b = b;
@@ -43,6 +42,29 @@ public class CLI {
 
 	public void addProcessListener(final ProcessListener l) {
 		listener.add(l);
+	}
+
+	public void removeProcessListener(final ProcessListener l) {
+		listener.remove(l);
+	}
+
+	public void run() {
+		printArgs(b.command());
+		try {
+			b.redirectErrorStream(true);
+			p = b.start();
+			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+
+			while (processInLine()) {
+
+			}
+			for (final ProcessListener l : listener) {
+				l.processStop();
+			}
+		} catch (final IOException e) {
+			Logging.log("CLI run failed", e);
+		}
 	}
 
 	private boolean processInLine() throws IOException {
@@ -56,30 +78,6 @@ public class CLI {
 			return true;
 		}
 		return false;
-	}
-
-	public void removeProcessListener(final ProcessListener l) {
-		listener.remove(l);
-	}
-
-	public void run() {
-		printArgs(b.command());
-		try {
-			b.redirectErrorStream(true);
-			p = b.start();
-			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			out = new BufferedWriter(
-					new OutputStreamWriter(p.getOutputStream()));
-
-			while (processInLine()) {
-
-			}
-			for (final ProcessListener l : listener) {
-				l.processStop();
-			}
-		} catch (final IOException e) {
-			Logging.log("CLI run failed", e);
-		}
 	}
 
 }

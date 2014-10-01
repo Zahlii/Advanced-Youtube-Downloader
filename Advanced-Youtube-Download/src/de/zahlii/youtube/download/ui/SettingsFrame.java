@@ -27,11 +27,11 @@ public class SettingsFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final JTextField formatPattern;
-	private final JSpinner spinnerAudioBitrate;
-	private final JLabel lblDestination;
-	private final JCheckBox chkKeepVideo;
 	private final JCheckBox chkImprove;
+	private final JCheckBox chkKeepVideo;
+	private final JTextField formatPattern;
+	private final JLabel lblDestination;
+	private final JSpinner spinnerAudioBitrate;
 	private final JSpinner spinnerVolumeAdjust;
 
 	/**
@@ -47,8 +47,7 @@ public class SettingsFrame extends JFrame {
 		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 30, 30, 10 };
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
-				sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -62,11 +61,9 @@ public class SettingsFrame extends JFrame {
 		getContentPane().add(lblNewLabel, gbc_lblNewLabel);
 
 		spinnerAudioBitrate = new JSpinner();
-		spinnerAudioBitrate.setModel(new SpinnerListModel(new String[] { "128",
-				"192", "320", "FLAC Lossless" }));
+		spinnerAudioBitrate.setModel(new SpinnerListModel(new String[] { "128", "192", "320", "FLAC Lossless" }));
 
-		spinnerAudioBitrate.setEditor(new JSpinner.DefaultEditor(
-				spinnerAudioBitrate));
+		spinnerAudioBitrate.setEditor(new JSpinner.DefaultEditor(spinnerAudioBitrate));
 
 		final GridBagConstraints gbc_spinnerAudioBitrate = new GridBagConstraints();
 		gbc_spinnerAudioBitrate.fill = GridBagConstraints.BOTH;
@@ -191,10 +188,8 @@ public class SettingsFrame extends JFrame {
 		getContentPane().add(lblVolumeAdjust, gbc_lblVolumeAdjust);
 
 		spinnerVolumeAdjust = new JSpinner();
-		spinnerVolumeAdjust.setModel(new SpinnerListModel(new String[] {
-				"ReplayGain", "Peak Normalize" }));
-		spinnerVolumeAdjust.setEditor(new JSpinner.DefaultEditor(
-				spinnerVolumeAdjust));
+		spinnerVolumeAdjust.setModel(new SpinnerListModel(new String[] { "ReplayGain", "Peak Normalize" }));
+		spinnerVolumeAdjust.setEditor(new JSpinner.DefaultEditor(spinnerVolumeAdjust));
 
 		final GridBagConstraints gbc_spinnerVolumeAdjust = new GridBagConstraints();
 		gbc_spinnerVolumeAdjust.gridwidth = 2;
@@ -234,36 +229,16 @@ public class SettingsFrame extends JFrame {
 	public void reloadConfig() {
 		final ConfigManager c = ConfigManager.getInstance();
 
-		spinnerAudioBitrate.setValue(c
-				.getConfig(ConfigKey.AUDIO_BITRATE, "320"));
-		spinnerVolumeAdjust.setValue(c.getConfig(ConfigKey.VOLUME_METHOD,
-				"ReplayGain"));
-		formatPattern.setText(c.getConfig(ConfigKey.FILENAME_CONVENTION,
-				"%artist - %title"));
+		spinnerAudioBitrate.setValue(c.getConfig(ConfigKey.AUDIO_BITRATE, "320"));
+		spinnerVolumeAdjust.setValue(c.getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain"));
+		formatPattern.setText(c.getConfig(ConfigKey.FILENAME_CONVENTION, "%artist - %title"));
 		File o = new File("").getAbsoluteFile();
 		while (o.getParentFile() != null) {
 			o = o.getParentFile();
 		}
-		lblDestination.setText(c.getConfig(ConfigKey.DIR_TARGET,
-				o.getAbsolutePath()));
-		chkKeepVideo.setSelected(Boolean.valueOf(c.getConfig(
-				ConfigKey.KEEP_VIDEO, "false")));
-		chkImprove.setSelected(Boolean.valueOf(c.getConfig(
-				ConfigKey.IMPROVE_CONVERT, "true")));
-	}
-
-	protected void saveConfig() {
-		final ConfigManager c = ConfigManager.getInstance();
-		c.setConfig(ConfigKey.AUDIO_BITRATE, spinnerAudioBitrate.getValue()
-				.toString());
-		c.setConfig(ConfigKey.FILENAME_CONVENTION, formatPattern.getText());
-		c.setConfig(ConfigKey.DIR_TARGET, lblDestination.getText());
-		c.setConfig(ConfigKey.IS_DEFAULT, "false");
-		c.setConfig(ConfigKey.KEEP_VIDEO, chkKeepVideo.isSelected() + "");
-		c.setConfig(ConfigKey.IMPROVE_CONVERT, chkImprove.isSelected() + "");
-		c.setConfig(ConfigKey.VOLUME_METHOD, spinnerVolumeAdjust.getValue()
-				.toString());
-		setVisible(false);
+		lblDestination.setText(c.getConfig(ConfigKey.DIR_TARGET, o.getAbsolutePath()));
+		chkKeepVideo.setSelected(Boolean.valueOf(c.getConfig(ConfigKey.KEEP_VIDEO, "false")));
+		chkImprove.setSelected(Boolean.valueOf(c.getConfig(ConfigKey.IMPROVE_CONVERT, "true")));
 	}
 
 	private int sum(final int[] array) {
@@ -272,6 +247,18 @@ public class SettingsFrame extends JFrame {
 			sum += j;
 		}
 		return sum + 10 * array.length;
+	}
+
+	protected void saveConfig() {
+		final ConfigManager c = ConfigManager.getInstance();
+		c.setConfig(ConfigKey.AUDIO_BITRATE, spinnerAudioBitrate.getValue().toString());
+		c.setConfig(ConfigKey.FILENAME_CONVENTION, formatPattern.getText());
+		c.setConfig(ConfigKey.DIR_TARGET, lblDestination.getText());
+		c.setConfig(ConfigKey.IS_DEFAULT, "false");
+		c.setConfig(ConfigKey.KEEP_VIDEO, chkKeepVideo.isSelected() + "");
+		c.setConfig(ConfigKey.IMPROVE_CONVERT, chkImprove.isSelected() + "");
+		c.setConfig(ConfigKey.VOLUME_METHOD, spinnerVolumeAdjust.getValue().toString());
+		setVisible(false);
 	}
 
 }

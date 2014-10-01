@@ -21,10 +21,7 @@ public class StepRelocate extends Step {
 	private File finalFile;
 
 	public StepRelocate(final QueueEntry entry) {
-		super(
-				entry,
-				new StepDescriptor("FileRelocate",
-						"Saves the files under the correct name, as specified in the config"));
+		super(entry, new StepDescriptor("FileRelocate", "Saves the files under the correct name, as specified in the config"));
 		// TODO Auto-generated constructor stub
 	}
 
@@ -38,12 +35,10 @@ public class StepRelocate extends Step {
 		}
 		data = (Map<FieldKey, String>) entry.getStepInfo().get("meta.data");
 
-		final String dirPath = ConfigManager.getInstance().getConfig(
-				ConfigKey.DIR_TARGET, ConfigManager.TEMP_DIR.getAbsolutePath());
+		final String dirPath = ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET, ConfigManager.TEMP_DIR.getAbsolutePath());
 
 		if (data != null) {
-			String convention = ConfigManager.getInstance().getConfig(
-					ConfigKey.FILENAME_CONVENTION, "%artist - %title");
+			String convention = ConfigManager.getInstance().getConfig(ConfigKey.FILENAME_CONVENTION, "%artist - %title");
 			// %album, %title, %artist, %track, %tracktotal, %year
 
 			convention = r(convention, "%album", FieldKey.ALBUM);
@@ -53,11 +48,9 @@ public class StepRelocate extends Step {
 			convention = r(convention, "%tracktotal", FieldKey.TRACK_TOTAL);
 			convention = r(convention, "%year", FieldKey.YEAR);
 
-			finalFile = new File(dirPath + ConfigManager.DS + convention
-					+ entry.getExtension());
+			finalFile = new File(dirPath + ConfigManager.DS + convention + entry.getExtension());
 		} else {
-			finalFile = new File(dirPath + ConfigManager.DS
-					+ entry.getDownloadTempFile().getName());
+			finalFile = new File(dirPath + ConfigManager.DS + entry.getDownloadTempFile().getName());
 		}
 
 		if (finalFile.exists()) {
@@ -68,21 +61,13 @@ public class StepRelocate extends Step {
 				public void run() {
 					// this is set to true whenever a temporary file has been
 					// added for conversion
-					final boolean show = (boolean) StepRelocate.this.entry
-							.getStepInfo().get("is_forked");
+					final boolean show = (boolean) StepRelocate.this.entry.getStepInfo().get("is_forked");
 
 					final int answer;
 
 					if (!show) {
-						answer = JOptionPane
-								.showConfirmDialog(
-										null,
-										"The file "
-												+ finalFile.getAbsolutePath()
-												+ " already exists.\nDo you want to overwrite it?",
-										"File exists",
-										JOptionPane.YES_NO_OPTION,
-										JOptionPane.WARNING_MESSAGE);
+						answer = JOptionPane.showConfirmDialog(null, "The file " + finalFile.getAbsolutePath() + " already exists.\nDo you want to overwrite it?", "File exists",
+								JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 					} else {
 						answer = JOptionPane.OK_OPTION;
@@ -91,11 +76,9 @@ public class StepRelocate extends Step {
 					if (answer == JOptionPane.OK_OPTION) {
 						FileUtils.deleteQuietly(finalFile);
 						try {
-							FileUtils.moveFile(StepRelocate.this.entry
-									.getConvertTempFile(), finalFile);
+							FileUtils.moveFile(StepRelocate.this.entry.getConvertTempFile(), finalFile);
 						} catch (final IOException e) {
-							Logging.log("failed to move file to new location",
-									e);
+							Logging.log("failed to move file to new location", e);
 						}
 						StepRelocate.this.entry.setFinalMP3File(finalFile);
 					} else {

@@ -39,7 +39,7 @@ import de.zahlii.youtube.download.step.Step;
 
 public class DownloadFrame extends JFrame {
 	public enum Stage {
-		WORKING, IDLE
+		IDLE, WORKING
 	}
 
 	/**
@@ -47,20 +47,20 @@ public class DownloadFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JTextField downloadLinkInput;
-	private final JButton startDownloadBtn;
 	private final JLabel lblCurrentStep;
 	private final JLabel lblLastStep;
-	private final JProgressBar stepProgressBar;
-	private final JProgressBar overallProgressBar;
 	private final JLabel lblQueue;
+	private final JMenuBar menuBar;
+	private final JMenu mntmFile;
+	private final JProgressBar overallProgressBar;
 
 	private final JProgressBar queueProgressBar;
 
 	private final SettingsFrame settings;
 
-	private final JMenuBar menuBar;
+	private final JButton startDownloadBtn;
 
-	private final JMenu mntmFile;
+	private final JProgressBar stepProgressBar;
 
 	/**
 	 * Create the frame.
@@ -79,8 +79,7 @@ public class DownloadFrame extends JFrame {
 		settings = new SettingsFrame();
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
-				sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
 
 		setLocationRelativeTo(null);
 
@@ -111,8 +110,7 @@ public class DownloadFrame extends JFrame {
 			@Override
 			public void keyReleased(final KeyEvent arg0) {
 				final String s = downloadLinkInput.getText();
-				final boolean en = !s.equals("Enter Download Link")
-						&& !s.equals("");
+				final boolean en = !s.equals("Enter Download Link") && !s.equals("");
 				startDownloadBtn.setEnabled(en);
 			}
 		});
@@ -142,15 +140,11 @@ public class DownloadFrame extends JFrame {
 			@Override
 			public void onEntryBegin(final QueueEntry entry) {
 				DownloadFrame.this.setStage(Stage.WORKING);
-				DownloadFrame.this.text(
-						lblCurrentStep,
-						entry.isDownloadTask() ? "Waiting for download to start..."
-								: "Waiting for audio filter to start...");
+				DownloadFrame.this.text(lblCurrentStep, entry.isDownloadTask() ? "Waiting for download to start..." : "Waiting for audio filter to start...");
 				if (entry.isDownloadTask()) {
 					DownloadFrame.this.text(lblLastStep, "<html>");
 				}
-				DownloadFrame.this.queueProgress(Queue.getInstance()
-						.getQueueProgress());
+				DownloadFrame.this.queueProgress(Queue.getInstance().getQueueProgress());
 				DownloadFrame.this.stepProgress(0);
 				DownloadFrame.this.overallProgress(0);
 			}
@@ -163,8 +157,7 @@ public class DownloadFrame extends JFrame {
 					DownloadFrame.this.text(lblLastStep, "<html>");
 				}
 
-				DownloadFrame.this.queueProgress(Queue.getInstance()
-						.getQueueProgress());
+				DownloadFrame.this.queueProgress(Queue.getInstance().getQueueProgress());
 				DownloadFrame.this.stepProgress(0);
 				DownloadFrame.this.overallProgress(0);
 				DownloadFrame.this.setStage(Stage.IDLE);
@@ -172,24 +165,19 @@ public class DownloadFrame extends JFrame {
 
 			@Override
 			public void onEntryStepBegin(final QueueEntry entry, final Step step) {
-				DownloadFrame.this.text(lblCurrentStep, "Running Step\""
-						+ step.getStepDescriptor().getStepName() + "\"...");
+				DownloadFrame.this.text(lblCurrentStep, "Running Step\"" + step.getStepDescriptor().getStepName() + "\"...");
 				DownloadFrame.this.stepProgress(0);
 			}
 
 			@Override
-			public void onEntryStepEnd(final QueueEntry entry, final Step step,
-					final long t, final double progress) {
+			public void onEntryStepEnd(final QueueEntry entry, final Step step, final long t, final double progress) {
 				DownloadFrame.this.stepProgress(1);
 				DownloadFrame.this.overallProgress(progress);
-				DownloadFrame.this.textNL(lblLastStep, "Step \""
-						+ step.getStepDescriptor().getStepName()
-						+ "\" finished: " + step.getStepResults());
+				DownloadFrame.this.textNL(lblLastStep, "Step \"" + step.getStepDescriptor().getStepName() + "\" finished: " + step.getStepResults());
 			}
 
 			@Override
-			public void onEntryStepProgress(final QueueEntry entry,
-					final Step step, final double progress) {
+			public void onEntryStepProgress(final QueueEntry entry, final Step step, final double progress) {
 				DownloadFrame.this.stepProgress(progress);
 
 			}
@@ -297,28 +285,10 @@ public class DownloadFrame extends JFrame {
 
 		setVisible(true);
 
-		if (Boolean.valueOf(ConfigManager.getInstance().getConfig(
-				ConfigKey.IS_DEFAULT, "true"))) {
+		if (Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.IS_DEFAULT, "true"))) {
 			openSettings();
 		}
 
-	}
-
-	protected void cleanUp() {
-		final File[] f = ConfigManager.TEMP_DIR.listFiles();
-		for (final File ftodelete : f) {
-			FileUtils.deleteQuietly(ftodelete);
-		}
-		try {
-			Runtime.getRuntime().exec("taskkill /F /IM ffmpeg.exe");
-		} catch (final IOException e) {
-			Logging.log("failed to run taskkilL", e);
-		}
-	}
-
-	protected void openSettings() {
-		settings.reloadConfig();
-		settings.setVisible(true);
 	}
 
 	private void overallProgress(final double progress) {
@@ -349,18 +319,18 @@ public class DownloadFrame extends JFrame {
 
 	private void setStage(final Stage s) {
 		switch (s) {
-		case IDLE:
-			downloadLinkInput.setEnabled(true);
-			stepProgress(0);
-			overallProgress(0);
-			queueProgress(0);
-			break;
-		case WORKING:
-			startDownloadBtn.setEnabled(false);
-			downloadLinkInput.setEnabled(false);
-			break;
-		default:
-			break;
+			case IDLE:
+				downloadLinkInput.setEnabled(true);
+				stepProgress(0);
+				overallProgress(0);
+				queueProgress(0);
+				break;
+			case WORKING:
+				startDownloadBtn.setEnabled(false);
+				downloadLinkInput.setEnabled(false);
+				break;
+			default:
+				break;
 
 		}
 	}
@@ -401,6 +371,23 @@ public class DownloadFrame extends JFrame {
 				}
 			});
 		}
+	}
+
+	protected void cleanUp() {
+		final File[] f = ConfigManager.TEMP_DIR.listFiles();
+		for (final File ftodelete : f) {
+			FileUtils.deleteQuietly(ftodelete);
+		}
+		try {
+			Runtime.getRuntime().exec("taskkill /F /IM ffmpeg.exe");
+		} catch (final IOException e) {
+			Logging.log("failed to run taskkilL", e);
+		}
+	}
+
+	protected void openSettings() {
+		settings.reloadConfig();
+		settings.setVisible(true);
 	}
 
 }

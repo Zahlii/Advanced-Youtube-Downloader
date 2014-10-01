@@ -28,8 +28,7 @@ public class StepReplayGain extends Step {
 				volumeGain = 0;
 			}
 			if (line.contains("Applying mp3 gain change of")) {
-				final int v = Integer.parseInt(line.split("of ")[1]
-						.split(" to")[0]);
+				final int v = Integer.parseInt(line.split("of ")[1].split(" to")[0]);
 				volumeGain = v;
 			}
 		}
@@ -38,8 +37,7 @@ public class StepReplayGain extends Step {
 	private double volume;
 
 	public StepReplayGain(final QueueEntry entry) {
-		super(entry, new StepDescriptor("ReplayGain",
-				"Normalizes the perceived audio volume."));
+		super(entry, new StepDescriptor("ReplayGain", "Normalizes the perceived audio volume."));
 		// TODO Auto-generated constructor stub
 	}
 
@@ -85,8 +83,7 @@ public class StepReplayGain extends Step {
 
 	@Override
 	public String getStepResults() {
-		return volume != 0 ? "Adjust by " + volume + "dB."
-				: "No adjust needed.";
+		return volume != 0 ? "Adjust by " + volume + "dB." : "No adjust needed.";
 	}
 
 }

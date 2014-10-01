@@ -22,12 +22,17 @@ public class SearchManager {
 
 	private SearchManager() {
 		try {
-			api = new GracenoteWebAPI("10483968",
-					"4EA6AAF67950AC0A07567F7195D7405B",
-					"264115384938188959-9606FB329A8E8D0ECF20D5E0C1BF71B0");
+			api = new GracenoteWebAPI("10483968", "4EA6AAF67950AC0A07567F7195D7405B", "264115384938188959-9606FB329A8E8D0ECF20D5E0C1BF71B0");
 		} catch (final GracenoteException e) {
 			Logging.log("failed connecting to gracenote API", e);
 		}
+	}
+
+	public GracenoteMetadata searchForSong(String artist, String album, String title) {
+		artist = _niceName(artist);
+		album = _niceName(album);
+		title = _niceName(title);
+		return api.searchTrack(artist, album, title);
 	}
 
 	private String _cutOff(final String tar, final String search) {
@@ -49,13 +54,5 @@ public class SearchManager {
 		final Matcher m1 = p1.matcher(trim.trim());
 		trim = m1.replaceAll("");
 		return trim.trim();
-	}
-
-	public GracenoteMetadata searchForSong(String artist, String album,
-			String title) {
-		artist = _niceName(artist);
-		album = _niceName(album);
-		title = _niceName(title);
-		return api.searchTrack(artist, album, title);
 	}
 }

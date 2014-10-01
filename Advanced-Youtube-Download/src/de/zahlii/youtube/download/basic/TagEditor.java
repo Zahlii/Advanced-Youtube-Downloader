@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
@@ -27,11 +26,10 @@ import org.jaudiotagger.tag.images.StandardArtwork;
 import de.zahlii.youtube.download.QueueEntry;
 
 public class TagEditor {
+	private final QueueEntry entry;
 	private final File musicFile;
 	private AudioFile song;
-	private AudioHeader head;
 	private Tag tag;
-	private final QueueEntry entry;
 
 	public TagEditor(final File file, final QueueEntry entry) {
 		musicFile = file;
@@ -39,12 +37,10 @@ public class TagEditor {
 
 		try {
 			song = AudioFileIO.read(musicFile);
-			head = song.getAudioHeader();
+			song.getAudioHeader();
 			tag = song.getTag();
-		} catch (IOException | InvalidAudioFrameException | CannotReadException
-				| TagException | ReadOnlyFileException e) {
+		} catch (IOException | InvalidAudioFrameException | CannotReadException | TagException | ReadOnlyFileException e) {
 			Logging.log("failed loading audio file", e);
-			head = null;
 			tag = null;
 			song = null;
 		}

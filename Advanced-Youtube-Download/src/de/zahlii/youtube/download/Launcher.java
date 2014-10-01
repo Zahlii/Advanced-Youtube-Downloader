@@ -17,7 +17,6 @@ import de.zahlii.youtube.download.ui.DownloadFrame;
 
 public class Launcher {
 	private static String[] args;
-	private static DownloadFrame mainFrame;
 	private static boolean isDefault;
 
 	public static String getFlag(final String f) {
@@ -29,44 +28,12 @@ public class Launcher {
 		return null;
 	}
 
-	private static void handleFiles(final File[] files) {
-
-		out.println("Handling " + files.length + " files.");
-		for (final File f : files) {
-			if (!f.canWrite()) {
-				out.println("Skipping " + f.getAbsolutePath()
-						+ " because it can't be written");
-				continue;
-			}
-
-			Queue.getInstance().addEntry(new QueueEntry(f));
-		}
-	}
-
 	public static boolean hasFlag(final String f) {
 		for (final String a : args) {
 			if (f.equals(a) || a.contains(f))
 				return true;
 		}
 		return false;
-	}
-
-	private static void launch() {
-		try {
-			UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
-		} catch (final UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					mainFrame = new DownloadFrame();
-				} catch (final Exception e) {
-					Logging.log("failed to start program", e);
-				}
-			}
-		});
 	}
 
 	public static void main(final String[] args) {
@@ -91,6 +58,37 @@ public class Launcher {
 		}
 		Launcher.launch();
 		Launcher.parseArgs();
+	}
+
+	private static void handleFiles(final File[] files) {
+
+		out.println("Handling " + files.length + " files.");
+		for (final File f : files) {
+			if (!f.canWrite()) {
+				out.println("Skipping " + f.getAbsolutePath() + " because it can't be written");
+				continue;
+			}
+
+			Queue.getInstance().addEntry(new QueueEntry(f));
+		}
+	}
+
+	private static void launch() {
+		try {
+			UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+		} catch (final UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					new DownloadFrame();
+				} catch (final Exception e) {
+					Logging.log("failed to start program", e);
+				}
+			}
+		});
 	}
 
 	private static void parseArgs() {
@@ -118,8 +116,7 @@ public class Launcher {
 				final FileFilter filter = new FileFilter() {
 					@Override
 					public boolean accept(final File arg0) {
-						final String t = file.replace("*", ".*").replace(
-								ConfigManager.DS, "\\" + ConfigManager.DS);
+						final String t = file.replace("*", ".*").replace(ConfigManager.DS, "\\" + ConfigManager.DS);
 						if (arg0.getAbsolutePath().matches(t))
 							return true;
 
@@ -145,8 +142,7 @@ public class Launcher {
 					}));
 				} else {
 					if (!(f.exists() && f.canWrite())) {
-						out.println("File " + f.getAbsolutePath()
-								+ " does not exist or can't be written");
+						out.println("File " + f.getAbsolutePath() + " does not exist or can't be written");
 						System.exit(0);
 					}
 					handleFiles(new File[] { f });

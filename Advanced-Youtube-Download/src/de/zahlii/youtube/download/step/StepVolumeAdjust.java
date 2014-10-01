@@ -34,8 +34,7 @@ public class StepVolumeAdjust extends Step {
 	}
 
 	public StepVolumeAdjust(final QueueEntry entry) {
-		super(entry, new StepDescriptor("VolumeAdjust",
-				"Normalizes the music so that the peak intensity is at 0.0dB"));
+		super(entry, new StepDescriptor("VolumeAdjust", "Normalizes the music so that the peak intensity is at 0.0dB"));
 	}
 
 	@Override
@@ -75,8 +74,7 @@ public class StepVolumeAdjust extends Step {
 	@Override
 	public String getStepResults() {
 		final double v = (double) entry.getStepInfo().get("volume.level");
-		return v > 1 ? "Song volume adjusted by " + v + "dB."
-				: "No volume adjust needed.";
+		return v > 1 ? "Song volume adjusted by " + v + "dB." : "No volume adjust needed.";
 	}
 
 }

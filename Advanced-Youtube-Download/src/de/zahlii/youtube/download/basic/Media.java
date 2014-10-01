@@ -11,29 +11,16 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Media {
-	public static final ImageIcon ICON_MUSIC = getImageIcon("icon_music.png");
-	public static final ImageIcon ICON_DOWNLOAD = getImageIcon("icon_download.png");
 	public static final ImageIcon ICON_ADD = getImageIcon("icon_add.png");
-	public static final ImageIcon ICON_SEARCH = getImageIcon("icon_search.png");
 	public static final ImageIcon ICON_CANCEL = getImageIcon("icon_cross.png");
-	public static final ImageIcon ICON_YTDL = getImageIcon("icon_YT.png");
+	public static final ImageIcon ICON_DOWNLOAD = getImageIcon("icon_download.png");
+	public static final ImageIcon ICON_MUSIC = getImageIcon("icon_music.png");
 	public static final ImageIcon ICON_OK = getImageIcon("icon_ok.png");
 	public static final ImageIcon ICON_PREF = getImageIcon("icon_pref.png");
+	public static final ImageIcon ICON_SEARCH = getImageIcon("icon_search.png");
+	public static final ImageIcon ICON_YTDL = getImageIcon("icon_YT.png");
 
-	private static ImageIcon getImageIcon(final String imageName) {
-		final InputStream imagePathName = tryGet(imageName);
-		try {
-			final BufferedImage image = ImageIO.read(imagePathName);
-			final ImageIcon icon = new ImageIcon(image);
-			return icon;
-		} catch (final IOException e) {
-			Logging.log("failed loading image icon", e);
-		}
-		return null;
-	}
-
-	public static BufferedImage getScaledImage(final BufferedImage src,
-			final int w, final int h) {
+	public static BufferedImage getScaledImage(final BufferedImage src, final int w, final int h) {
 		int finalw = w;
 		int finalh = h;
 		double factor = 1.0d;
@@ -45,14 +32,24 @@ public class Media {
 			finalw = (int) (finalh * factor);
 		}
 
-		final BufferedImage resizedImg = new BufferedImage(finalw, finalh,
-				Transparency.TRANSLUCENT);
+		final BufferedImage resizedImg = new BufferedImage(finalw, finalh, Transparency.TRANSLUCENT);
 		final Graphics2D g2 = resizedImg.createGraphics();
-		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2.drawImage(src, 0, 0, finalw, finalh, null);
 		g2.dispose();
 		return resizedImg;
+	}
+
+	private static ImageIcon getImageIcon(final String imageName) {
+		final InputStream imagePathName = tryGet(imageName);
+		try {
+			final BufferedImage image = ImageIO.read(imagePathName);
+			final ImageIcon icon = new ImageIcon(image);
+			return icon;
+		} catch (final IOException e) {
+			Logging.log("failed loading image icon", e);
+		}
+		return null;
 	}
 
 	private static InputStream tryGet(final String path) {

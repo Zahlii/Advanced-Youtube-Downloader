@@ -19,48 +19,8 @@ import java.util.Date;
  * 
  */
 public class Logging {
-	private static boolean printStackTrace = true;
 	private static boolean isSet;
-
-	/**
-	 * 
-	 * log into a file
-	 * 
-	 * @author jfruehau
-	 * 
-	 * @param file
-	 * @param e
-	 */
-	private static void appendException(final String file, final Exception e) {
-		final String f = getPathName() + "/" + file;
-
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(
-				new FileWriter(f, true)))) {
-			e.printStackTrace(out);
-		} catch (final IOException e1) {
-			Logging.log("failed writing into " + f, e);
-		}
-	}
-
-	/**
-	 * 
-	 * log into a file
-	 * 
-	 * @author jfruehau
-	 * 
-	 * @param file
-	 * @param text
-	 */
-	private static void appendString(final String file, final String text) {
-		final String f = getPathName() + "/" + file;
-
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(
-				new FileWriter(f, true)))) {
-			out.println(text);
-		} catch (final IOException e) {
-			Logging.log("failed writing into " + f, e);
-		}
-	}
+	private static boolean printStackTrace = true;
 
 	/**
 	 * 
@@ -71,13 +31,11 @@ public class Logging {
 	 * @return
 	 */
 	public static String getPathName() {
-		File f = new File(Logging.class.getProtectionDomain().getCodeSource()
-				.getLocation().getPath());
+		File f = new File(Logging.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
 		final String sep = System.getProperty("file.separator");
 
-		if (f.getAbsolutePath().contains(sep + "bin")
-				|| f.getAbsolutePath().contains(".jar")) {
+		if (f.getAbsolutePath().contains(sep + "bin") || f.getAbsolutePath().contains(".jar")) {
 			f = f.getParentFile();
 		}
 
@@ -88,23 +46,6 @@ public class Logging {
 			isSet = true;
 		}
 		return p;
-	}
-
-	/**
-	 * 
-	 * get the formatted time
-	 * 
-	 * @author jfruehau
-	 * 
-	 * @return a timestamp
-	 */
-	private static String getTimeStamp() {
-
-		final Date d = new Date();
-		final SimpleDateFormat df = new SimpleDateFormat(
-				"HH:mm:ss.SSS dd.MM.yyyy");
-
-		return df.format(d);
 	}
 
 	/**
@@ -120,11 +61,9 @@ public class Logging {
 		final StackTraceElement s = Thread.currentThread().getStackTrace()[2];
 
 		final String cls = s.getClassName();
-		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1,
-				cls.length());
+		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		final String red = padRight(shortCls + "." + s.getMethodName() + "("
-				+ s.getLineNumber() + ")", 35);
+		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")", 35);
 
 		final String msg = getTimeStamp() + " - [@ " + red + "] " + message;
 		System.err.println(msg);
@@ -146,13 +85,10 @@ public class Logging {
 		final StackTraceElement s = Thread.currentThread().getStackTrace()[2];
 
 		final String cls = s.getClassName();
-		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1,
-				cls.length());
+		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		final String red = padRight(shortCls + "." + s.getMethodName() + "("
-				+ s.getLineNumber() + ")", 35);
-		log(message + "[ " + e.getClass().getSimpleName() + " - "
-				+ e.getMessage() + " ] from " + red);
+		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")", 35);
+		log(message + "[ " + e.getClass().getSimpleName() + " - " + e.getMessage() + " ] from " + red);
 
 		if (!printStackTrace)
 			return;
@@ -180,6 +116,60 @@ public class Logging {
 
 	public static String padRight(final String s, final int n) {
 		return String.format("%1$-" + n + "s", s);
+	}
+
+	/**
+	 * 
+	 * log into a file
+	 * 
+	 * @author jfruehau
+	 * 
+	 * @param file
+	 * @param e
+	 */
+	private static void appendException(final String file, final Exception e) {
+		final String f = getPathName() + "/" + file;
+
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+			e.printStackTrace(out);
+		} catch (final IOException e1) {
+			Logging.log("failed writing into " + f, e);
+		}
+	}
+
+	/**
+	 * 
+	 * log into a file
+	 * 
+	 * @author jfruehau
+	 * 
+	 * @param file
+	 * @param text
+	 */
+	private static void appendString(final String file, final String text) {
+		final String f = getPathName() + "/" + file;
+
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
+			out.println(text);
+		} catch (final IOException e) {
+			Logging.log("failed writing into " + f, e);
+		}
+	}
+
+	/**
+	 * 
+	 * get the formatted time
+	 * 
+	 * @author jfruehau
+	 * 
+	 * @return a timestamp
+	 */
+	private static String getTimeStamp() {
+
+		final Date d = new Date();
+		final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS dd.MM.yyyy");
+
+		return df.format(d);
 	}
 
 }

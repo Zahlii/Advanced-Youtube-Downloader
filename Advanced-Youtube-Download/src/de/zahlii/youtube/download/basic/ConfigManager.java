@@ -10,29 +10,28 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * This class is used for storing and retrieving the Config entries. Every entry
- * is associated with exactly one ConfigKey.
+ * This class is used for storing and retrieving the Config entries. Every entry is associated with exactly one ConfigKey.
  * 
  * @author Zahlii
  * 
  */
 public class ConfigManager {
 	public enum ConfigKey {
-		AUDIO_BITRATE, DIR_TARGET, FILENAME_CONVENTION, DIR_IMAGES, IS_DEFAULT, KEEP_VIDEO, IMPROVE_CONVERT, VOLUME_METHOD
+		AUDIO_BITRATE, DIR_IMAGES, DIR_TARGET, FILENAME_CONVENTION, IMPROVE_CONVERT, IS_DEFAULT, KEEP_VIDEO, VOLUME_METHOD
 	}
 
 	public static final String DS = File.separator;
-	public static final File YOUTUBE_DL = new File("youtube-dl.exe");
-	public static final File MP3GAIN = new File("mp3gain.exe");
 	public static final File FFMPEG = new File("ffmpeg.exe");
+	public static final File METAFLAC = new File("metaflac.exe");
+	public static final File MP3GAIN = new File("mp3gain.exe");
 	public static final File TEMP_DIR = new File("temp");
 
-	public static final File METAFLAC = new File("metaflac.exe");
+	public static final File YOUTUBE_DL = new File("youtube-dl.exe");
+
+	private static File configFile = new File("ytload.config");
+	private static String encoding = "UTF-8";
 
 	private static ConfigManager instance;
-	private static File configFile = new File("ytload.config");
-
-	private static String encoding = "UTF-8";
 
 	public static ConfigManager getInstance() {
 		if (instance == null) {
@@ -50,8 +49,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get a config entry or the default value. Please note: When the entry does
-	 * not exist, it will be saved to the default value in the config file.
+	 * Get a config entry or the default value. Please note: When the entry does not exist, it will be saved to the default value in the config file.
 	 * 
 	 * @param key
 	 *            the ConfigKey to get
@@ -68,32 +66,6 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Loads the config from the file, creating it if necessary.
-	 */
-	private void loadFile() {
-
-		try {
-			if (!configFile.exists()) {
-				configFile.createNewFile();
-			}
-
-			final byte[] encoded = Files.readAllBytes(Paths.get(configFile
-					.toURI()));
-			final String[] lines = new String(encoded, encoding).split("\n");
-			for (final String line : lines) {
-				final String[] parts = line.split("=");
-				if (parts.length < 2) {
-					continue;
-				}
-				config.put(ConfigKey.valueOf(parts[0]),
-						parts[1].replace("\r", "").replace("\n", ""));
-			}
-		} catch (final IOException e) {
-			Logging.log("failed loading config file", e);
-		}
-	}
-
-	/**
 	 * Set a config entry.
 	 * 
 	 * @param key
@@ -104,6 +76,30 @@ public class ConfigManager {
 	public void setConfig(final ConfigKey key, final String value) {
 		config.put(key, value);
 		writeFile();
+	}
+
+	/**
+	 * Loads the config from the file, creating it if necessary.
+	 */
+	private void loadFile() {
+
+		try {
+			if (!configFile.exists()) {
+				configFile.createNewFile();
+			}
+
+			final byte[] encoded = Files.readAllBytes(Paths.get(configFile.toURI()));
+			final String[] lines = new String(encoded, encoding).split("\n");
+			for (final String line : lines) {
+				final String[] parts = line.split("=");
+				if (parts.length < 2) {
+					continue;
+				}
+				config.put(ConfigKey.valueOf(parts[0]), parts[1].replace("\r", "").replace("\n", ""));
+			}
+		} catch (final IOException e) {
+			Logging.log("failed loading config file", e);
+		}
 	}
 
 	/**

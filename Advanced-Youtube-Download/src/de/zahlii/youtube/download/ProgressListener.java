@@ -9,8 +9,7 @@ public interface ProgressListener {
 
 	public void onEntryStepBegin(QueueEntry entry, Step step);
 
-	public void onEntryStepEnd(QueueEntry entry, Step step, long t,
-			double progress);
+	public void onEntryStepEnd(QueueEntry entry, Step step, long t, double progress);
 
 	public void onEntryStepProgress(QueueEntry entry, Step step, double progress);
 }

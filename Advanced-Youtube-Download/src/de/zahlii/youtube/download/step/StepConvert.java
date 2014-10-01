@@ -13,26 +13,16 @@ import de.zahlii.youtube.download.cli.CLI;
 public class StepConvert extends Step {
 
 	public StepConvert(final QueueEntry entry) {
-		super(
-				entry,
-				new StepDescriptor(
-						"FileConvert",
-						"Converts the downloaded file while applying the defined filters and effects on it"));
+		super(entry, new StepDescriptor("FileConvert", "Converts the downloaded file while applying the defined filters and effects on it"));
 	}
 
 	@Override
 	public void doStep() {
 		// not necessary
-		final boolean hasSilenceStart = entry.getStepInfo().containsKey(
-				"silence.start")
-				&& (boolean) entry.getStepInfo().get("silence.start");
-		final boolean hasSilenceEnd = entry.getStepInfo().containsKey(
-				"silence.end")
-				&& (boolean) entry.getStepInfo().get("silence.end");
-		final boolean sameFile = entry.getDownloadTempFile().getName()
-				.equals(entry.getConvertTempFile().getName());
-		final boolean hasVolume = entry.getStepInfo().containsKey(
-				"volume.level");
+		final boolean hasSilenceStart = entry.getStepInfo().containsKey("silence.start") && (boolean) entry.getStepInfo().get("silence.start");
+		final boolean hasSilenceEnd = entry.getStepInfo().containsKey("silence.end") && (boolean) entry.getStepInfo().get("silence.end");
+		final boolean sameFile = entry.getDownloadTempFile().getName().equals(entry.getConvertTempFile().getName());
+		final boolean hasVolume = entry.getStepInfo().containsKey("volume.level");
 
 		if (!hasSilenceStart && !hasSilenceEnd && sameFile && !hasVolume) {
 			Logging.log("Skipping conversion");
@@ -42,11 +32,9 @@ public class StepConvert extends Step {
 		}
 		entry.getStepInfo().put("skipped", false);
 		File target = entry.getConvertTempFile();
-		if (target.getAbsolutePath().equals(
-				entry.getDownloadTempFile().getAbsolutePath())) {
+		if (target.getAbsolutePath().equals(entry.getDownloadTempFile().getAbsolutePath())) {
 
-			target = new File(ConfigManager.TEMP_DIR + ConfigManager.DS
-					+ entry.getConvertTempFile().getName());
+			target = new File(ConfigManager.TEMP_DIR + ConfigManager.DS + entry.getConvertTempFile().getName());
 
 			entry.getStepInfo().put("is_forked", true);
 		} else {
@@ -62,22 +50,17 @@ public class StepConvert extends Step {
 		meta.add("-y");
 		if (!entry.isFLAC()) {
 			meta.add("-ab");
-			meta.add(ConfigManager.getInstance().getConfig(
-					ConfigKey.AUDIO_BITRATE, "320")
-					+ "k");
+			meta.add(ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE, "320") + "k");
 		} else {
 			meta.add("-compression_level");
 			meta.add("12");
 		}
 
-		if (entry.getStepInfo().containsKey("silence.start")
-				&& (boolean) entry.getStepInfo().get("silence.start")) {
+		if (entry.getStepInfo().containsKey("silence.start") && (boolean) entry.getStepInfo().get("silence.start")) {
 			meta.add("-ss");
-			meta.add((double) entry.getStepInfo().get("silence.start.time")
-					+ "");
+			meta.add((double) entry.getStepInfo().get("silence.start.time") + "");
 		}
-		if (entry.getStepInfo().containsKey("silence.end")
-				&& (boolean) entry.getStepInfo().get("silence.end")) {
+		if (entry.getStepInfo().containsKey("silence.end") && (boolean) entry.getStepInfo().get("silence.end")) {
 			meta.add("-t");
 			double s = 0;
 			try {
@@ -85,14 +68,12 @@ public class StepConvert extends Step {
 			} catch (final NullPointerException e) {
 
 			}
-			meta.add((double) entry.getStepInfo().get("silence.end.time") - s
-					+ "");
+			meta.add((double) entry.getStepInfo().get("silence.end.time") - s + "");
 		}
 
 		double v = 0.0;
 
-		if (entry.getStepInfo().containsKey("volume.level")
-				&& (v = (double) entry.getStepInfo().get("volume.level")) > 1) {
+		if (entry.getStepInfo().containsKey("volume.level") && (v = (double) entry.getStepInfo().get("volume.level")) > 1) {
 			meta.add("-af");
 			meta.add("volume=" + v + "dB:precision=double");
 		}
@@ -116,8 +97,7 @@ public class StepConvert extends Step {
 
 	@Override
 	public String getStepResults() {
-		return "File converted to " + entry.getConvertTempFile().getName()
-				+ ".";
+		return "File converted to " + entry.getConvertTempFile().getName() + ".";
 	}
 
 }

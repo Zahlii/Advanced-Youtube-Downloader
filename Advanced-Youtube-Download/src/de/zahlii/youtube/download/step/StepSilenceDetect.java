@@ -13,11 +13,7 @@ public class StepSilenceDetect extends Step {
 	private final ArrayList<SilenceInfo> silence = new ArrayList<SilenceInfo>();
 
 	public StepSilenceDetect(final QueueEntry entry) {
-		super(
-				entry,
-				new StepDescriptor(
-						"SilenceDetect",
-						"Detects different phases of silence and cuts them out at the start and end of the clip."));
+		super(entry, new StepDescriptor("SilenceDetect", "Detects different phases of silence and cuts them out at the start and end of the clip."));
 	}
 
 	@Override
@@ -108,12 +104,8 @@ public class StepSilenceDetect extends Step {
 
 	@Override
 	public String getStepResults() {
-		final String ss = (boolean) entry.getStepInfo().get("silence.start") ? "Silence at Start: "
-				+ entry.getStepInfo().get("silence.start.time")
-				: "";
-		final String se = (boolean) entry.getStepInfo().get("silence.end") ? "Silence at End: "
-				+ entry.getStepInfo().get("silence.end.time")
-				: "";
+		final String ss = (boolean) entry.getStepInfo().get("silence.start") ? "Silence at Start: " + entry.getStepInfo().get("silence.start.time") : "";
+		final String se = (boolean) entry.getStepInfo().get("silence.end") ? "Silence at End: " + entry.getStepInfo().get("silence.end.time") : "";
 
 		String r = ss;
 		r += se.equals("") ? "" : ss.equals("") ? se : ", " + se;

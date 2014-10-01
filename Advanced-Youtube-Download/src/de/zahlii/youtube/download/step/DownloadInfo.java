@@ -4,16 +4,15 @@ import de.zahlii.youtube.download.basic.Logging;
 
 public class DownloadInfo {
 	public static boolean isProgress(final String line) {
-		return line.startsWith("[download]") && line.contains("ETA")
-				&& !line.contains("Unknown");
+		return line.startsWith("[download]") && line.contains("ETA") && !line.contains("Unknown");
 	}
 
+	public long done;
+	public long eta;
 	public double progress;
 	public long size;
-	public long done;
-	public long speed;
 
-	public long eta;
+	public long speed;
 
 	public DownloadInfo(final String line) {
 		try {

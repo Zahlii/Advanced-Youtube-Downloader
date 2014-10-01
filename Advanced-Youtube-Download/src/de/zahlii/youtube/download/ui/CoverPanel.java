@@ -33,10 +33,8 @@ public class CoverPanel extends JPanel {
 	@Override
 	public void paintComponent(final Graphics g) {
 		final Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		if (img == null) {
 			final String stringTime = "no artwork";
@@ -45,8 +43,7 @@ public class CoverPanel extends JPanel {
 			final FontMetrics fm = g2d.getFontMetrics();
 			final Rectangle2D r = fm.getStringBounds(stringTime, g2d);
 			final int x = (int) ((getWidth() - r.getWidth()) / 2.0);
-			final int y = (int) ((getHeight() - r.getHeight()) / 2.0 + fm
-					.getAscent());
+			final int y = (int) ((getHeight() - r.getHeight()) / 2.0 + fm.getAscent());
 			g.drawString(stringTime, x, y);
 		} else {
 			g.drawImage(img, 0, 0, size, size, Color.BLACK, null);

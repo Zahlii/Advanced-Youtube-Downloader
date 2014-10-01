@@ -1,8 +1,8 @@
 package de.zahlii.youtube.download.step;
 
 public class StepDescriptor {
-	private final String stepName;
 	private final String stepDescription;
+	private final String stepName;
 
 	public StepDescriptor(final String n, final String d) {
 		stepName = n;

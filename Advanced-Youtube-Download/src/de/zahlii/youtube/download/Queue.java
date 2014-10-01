@@ -21,9 +21,9 @@ public class Queue implements ProgressListener {
 	private final ArrayList<ProgressListener> progressListeners = new ArrayList<>();
 
 	private final LinkedList<QueueEntry> queue = new LinkedList<>();
-	private Stage status = Stage.IDLE;
-	private int queueSizeTotal = 0;
 	private int queueSizeCurrent = 0;
+	private int queueSizeTotal = 0;
+	private Stage status = Stage.IDLE;
 
 	private Queue() {
 
@@ -54,8 +54,7 @@ public class Queue implements ProgressListener {
 		QueueEntry q;
 		if ((q = popNextItem()) != null) {
 			if (q.getDownloadTempFile() != null) {
-				Logging.log("Handling "
-						+ q.getDownloadTempFile().getAbsolutePath());
+				Logging.log("Handling " + q.getDownloadTempFile().getAbsolutePath());
 			}
 			q.start();
 			status = Stage.WORKING;
@@ -91,16 +90,14 @@ public class Queue implements ProgressListener {
 	}
 
 	@Override
-	public void onEntryStepEnd(final QueueEntry entry, final Step step,
-			final long t, final double p) {
+	public void onEntryStepEnd(final QueueEntry entry, final Step step, final long t, final double p) {
 		for (final ProgressListener l : progressListeners) {
 			l.onEntryStepEnd(entry, step, t, p);
 		}
 	}
 
 	@Override
-	public void onEntryStepProgress(final QueueEntry entry, final Step step,
-			final double progress) {
+	public void onEntryStepProgress(final QueueEntry entry, final Step step, final double progress) {
 		for (final ProgressListener l : progressListeners) {
 			l.onEntryStepProgress(entry, step, progress);
 		}

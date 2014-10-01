@@ -37,25 +37,37 @@ public class InfoFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final JTextField artist;
-	private final JTextField title;
 	private final JTextField album;
-	private final List<ActionListener> listeners;
-	private final JTextField year;
-	private final JTextField track;
-	private final JTextField trackCount;
 	private final JTextField albumartist;
-	private final JTextField genre;
-	private final JTextField tempo;
-	private final JTextField mood;
-	private final CoverPanel coverPanel;
-
-	private TagEditor tagEdit;
+	private final JTextField artist;
 	private final JButton btnChoseImage;
-
-	private BufferedImage tempImage;
-
 	private final JButton btnRestoreArtwork;
+	private final CoverPanel coverPanel;
+	private final JTextField genre;
+	private final List<ActionListener> listeners;
+	private final JTextField mood;
+	private TagEditor tagEdit;
+	private BufferedImage tempImage;
+	private final JTextField tempo;
+
+	private final JTextField title;
+	private final JTextField track;
+
+	private final JTextField trackCount;
+
+	private final JTextField year;
+
+	public InfoFrame(final QueueEntry e) {
+		this();
+		tagEdit = new TagEditor(e.getConvertTempFile() != null ? e.getConvertTempFile() : e.getDownloadTempFile(), e);
+		this.fillData(e);
+	}
+
+	public InfoFrame(final QueueEntry e, final GracenoteMetadata d) {
+		this();
+		tagEdit = new TagEditor(e.getConvertTempFile() != null ? e.getConvertTempFile() : e.getDownloadTempFile(), e);
+		this.fillData(d);
+	}
 
 	private InfoFrame() {
 		super("Edit Audio Information");
@@ -75,12 +87,10 @@ public class InfoFrame extends JFrame {
 		final GridBagLayout gbc_main = new GridBagLayout();
 		gbc_main.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		gbc_main.columnWidths = new int[] { 10, 100, 100, 100, 270, 10 };
-		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 30, 30, 30, 30,
-				30, 10 };
+		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 30, 30, 30, 30, 30, 10 };
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
-				sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -332,16 +342,14 @@ public class InfoFrame extends JFrame {
 				final JFileChooser fc = new JFileChooser();
 				fc.setDialogTitle("Chose Artwork Image");
 				fc.setApproveButtonText("Set Artwork");
-				final String path = ConfigManager.getInstance().getConfig(
-						ConfigKey.DIR_IMAGES, new File("").getAbsolutePath());
+				final String path = ConfigManager.getInstance().getConfig(ConfigKey.DIR_IMAGES, new File("").getAbsolutePath());
 				fc.setCurrentDirectory(new File(path));
 				fc.setMultiSelectionEnabled(false);
 
 				final int res = fc.showOpenDialog(null);
 				if (res == JFileChooser.APPROVE_OPTION) {
 					final File f = fc.getSelectedFile();
-					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES,
-							f.getParentFile().getAbsolutePath());
+					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES, f.getParentFile().getAbsolutePath());
 					InfoFrame.this.reloadCoverImage(f);
 				}
 			}
@@ -354,65 +362,11 @@ public class InfoFrame extends JFrame {
 		getContentPane().add(btnChoseImage, gbc_btnChoseImage);
 	}
 
-	public InfoFrame(final QueueEntry e) {
-		this();
-		tagEdit = new TagEditor(
-				e.getConvertTempFile() != null ? e.getConvertTempFile()
-						: e.getDownloadTempFile(), e);
-		this.fillData(e);
-	}
-
-	public InfoFrame(final QueueEntry e, final GracenoteMetadata d) {
-		this();
-		tagEdit = new TagEditor(
-				e.getConvertTempFile() != null ? e.getConvertTempFile()
-						: e.getDownloadTempFile(), e);
-		this.fillData(d);
-	}
-
 	public void addActionListener(final ActionListener a) {
 		listeners.add(a);
 	}
 
-	private void fillData(final GracenoteMetadata d) {
-		if (d == null)
-			return;
-
-		try {
-			final String art = d.getAlbum(0).get("album_coverart").toString();
-			coverPanel.setImage(Helper.downloadImage(art));
-		} catch (final Exception e) {
-			coverPanel.setImage(null);
-		}
-		artist.setText(d.getArtist());
-		title.setText(d.getTitle());
-		album.setText(d.getString("album_title"));
-		year.setText(d.getString("album_year"));
-		albumartist.setText(d.getString("album_artist_name"));
-		genre.setText(d.getArrString("genre"));
-		tempo.setText(d.getArrString("tempo"));
-		mood.setText(d.getArrString("mood"));
-		track.setText(d.getString("track_number"));
-		trackCount.setText(d.getString("track_count"));
-	}
-
-	private void fillData(final QueueEntry e) {
-
-		coverPanel.setImage(tagEdit.readArtwork());
-		artist.setText(tagEdit.readField(FieldKey.ARTIST));
-		title.setText(tagEdit.readField(FieldKey.TITLE));
-		album.setText(tagEdit.readField(FieldKey.ALBUM));
-		year.setText(tagEdit.readField(FieldKey.YEAR));
-		albumartist.setText(tagEdit.readField(FieldKey.ALBUM_ARTIST));
-		genre.setText(tagEdit.readField(FieldKey.GENRE));
-		tempo.setText(tagEdit.readField(FieldKey.TEMPO));
-		mood.setText(tagEdit.readField(FieldKey.MOOD));
-		track.setText(tagEdit.readField(FieldKey.TRACK));
-		trackCount.setText(tagEdit.readField(FieldKey.TRACK_TOTAL));
-	}
-
-	public void fillInfo(final String artist2, final String title2,
-			final String album2) {
+	public void fillInfo(final String artist2, final String title2, final String album2) {
 		artist.setText(artist2);
 		title.setText(title2);
 		album.setText(album2);
@@ -466,6 +420,47 @@ public class InfoFrame extends JFrame {
 		return year.getText();
 	}
 
+	public void removeActionListener(final ActionListener a) {
+		listeners.remove(a);
+	}
+
+	private void fillData(final GracenoteMetadata d) {
+		if (d == null)
+			return;
+
+		try {
+			final String art = d.getAlbum(0).get("album_coverart").toString();
+			coverPanel.setImage(Helper.downloadImage(art));
+		} catch (final Exception e) {
+			coverPanel.setImage(null);
+		}
+		artist.setText(d.getArtist());
+		title.setText(d.getTitle());
+		album.setText(d.getString("album_title"));
+		year.setText(d.getString("album_year"));
+		albumartist.setText(d.getString("album_artist_name"));
+		genre.setText(d.getArrString("genre"));
+		tempo.setText(d.getArrString("tempo"));
+		mood.setText(d.getArrString("mood"));
+		track.setText(d.getString("track_number"));
+		trackCount.setText(d.getString("track_count"));
+	}
+
+	private void fillData(final QueueEntry e) {
+
+		coverPanel.setImage(tagEdit.readArtwork());
+		artist.setText(tagEdit.readField(FieldKey.ARTIST));
+		title.setText(tagEdit.readField(FieldKey.TITLE));
+		album.setText(tagEdit.readField(FieldKey.ALBUM));
+		year.setText(tagEdit.readField(FieldKey.YEAR));
+		albumartist.setText(tagEdit.readField(FieldKey.ALBUM_ARTIST));
+		genre.setText(tagEdit.readField(FieldKey.GENRE));
+		tempo.setText(tagEdit.readField(FieldKey.TEMPO));
+		mood.setText(tagEdit.readField(FieldKey.MOOD));
+		track.setText(tagEdit.readField(FieldKey.TRACK));
+		trackCount.setText(tagEdit.readField(FieldKey.TRACK_TOTAL));
+	}
+
 	private void reloadCoverImage(final File f) {
 		try {
 			tempImage = coverPanel.getImage();
@@ -474,10 +469,6 @@ public class InfoFrame extends JFrame {
 		} catch (final IOException e) {
 			Logging.log("failed to load new artwork from file", e);
 		}
-	}
-
-	public void removeActionListener(final ActionListener a) {
-		listeners.remove(a);
 	}
 
 	private int sum(final int[] array) {

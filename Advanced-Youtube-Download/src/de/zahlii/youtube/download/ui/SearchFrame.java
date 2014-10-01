@@ -23,10 +23,10 @@ public class SearchFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final JTextField artist;
-	private final JTextField title;
 	private final JTextField album;
+	private final JTextField artist;
 	private final List<ActionListener> listeners;
+	private final JTextField title;
 
 	public SearchFrame(final String art, final String tit, final String alb) {
 		super("Enter Additional Metadata to Search For");
@@ -49,8 +49,7 @@ public class SearchFrame extends JFrame {
 		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 10 };
 
 		getContentPane().setLayout(gbc_main);
-		setMinimumSize(new Dimension(sum(gbc_main.columnWidths),
-				sum(gbc_main.rowHeights)));
+		setMinimumSize(new Dimension(sum(gbc_main.columnWidths), sum(gbc_main.rowHeights)));
 		setResizable(false);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLocationRelativeTo(null);

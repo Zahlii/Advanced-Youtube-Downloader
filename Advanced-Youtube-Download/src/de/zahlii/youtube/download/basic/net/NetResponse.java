@@ -24,8 +24,7 @@ import org.apache.http.client.methods.HttpGet;
  */
 public class NetResponse {
 
-	public static String extract(final String target, final String string,
-			final String string2) {
+	public static String extract(final String target, final String string, final String string2) {
 		final int pos = target.indexOf(string);
 		if (pos == -1)
 			return "";
@@ -46,10 +45,8 @@ public class NetResponse {
 	 * @param string
 	 * @return
 	 */
-	public static List<String> rextract(final String data, final String string,
-			final boolean dotall) {
-		final Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL)
-				: Pattern.compile(string);
+	public static List<String> rextract(final String data, final String string, final boolean dotall) {
+		final Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL) : Pattern.compile(string);
 		final Matcher m = p.matcher(data);
 		final List<String> ret = new ArrayList<String>();
 
@@ -63,15 +60,15 @@ public class NetResponse {
 	}
 
 	public HttpGet request;
-	public List<Header> responseHeaders;
+	public List<Header> requestHeaders;
 	public String responseBody;
-	public StatusLine responseStatusLine;
 	public HttpEntity responseEntity;
-	public String responseType;
+	public List<Header> responseHeaders;
+	public StatusLine responseStatusLine;
 
 	public BufferedInputStream responseStream;
 
-	public List<Header> requestHeaders;
+	public String responseType;
 
 	public String extract(final String s1, final String s2) {
 		return extract(responseBody, s1, s2);

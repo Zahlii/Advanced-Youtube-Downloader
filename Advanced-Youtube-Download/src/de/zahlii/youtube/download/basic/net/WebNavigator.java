@@ -43,14 +43,13 @@ public class WebNavigator {
 		return instance;
 	}
 
-	private URIBuilder host;
-	private CookieStore cookie;
-	private HttpClientContext context;
 	private HttpClient client;
+	private HttpClientContext context;
+	private CookieStore cookie;
+	private URIBuilder host;
 
 	private WebNavigator() {
-		final RequestConfig globalConfig = RequestConfig.custom()
-				.setCookieSpec(CookieSpecs.BEST_MATCH).build();
+		final RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
 
 		host = new URIBuilder().setScheme("https").setHost("www.youtube.com");
 
@@ -58,44 +57,35 @@ public class WebNavigator {
 		context = HttpClientContext.create();
 		context.setCookieStore(cookie);
 
-		client = HttpClients.custom().setDefaultRequestConfig(globalConfig)
-				.setDefaultCookieStore(cookie)
-				.addInterceptorFirst(new HttpRequestInterceptor() {
+		client = HttpClients.custom().setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookie).addInterceptorFirst(new HttpRequestInterceptor() {
 
-					@Override
-					public void process(final HttpRequest request,
-							final HttpContext context) throws HttpException,
-							IOException {
-						if (!request.containsHeader("Accept-Encoding")) {
-							request.addHeader("Accept-Encoding", "gzip");
-						}
+			@Override
+			public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
+				if (!request.containsHeader("Accept-Encoding")) {
+					request.addHeader("Accept-Encoding", "gzip");
+				}
 
-					}
-				}).addInterceptorFirst(new HttpResponseInterceptor() {
+			}
+		}).addInterceptorFirst(new HttpResponseInterceptor() {
 
-					@Override
-					public void process(final HttpResponse response,
-							final HttpContext context) throws HttpException,
-							IOException {
-						final HttpEntity entity = response.getEntity();
-						if (entity != null) {
-							final Header ceheader = entity.getContentEncoding();
-							if (ceheader != null) {
-								final HeaderElement[] codecs = ceheader
-										.getElements();
-								for (final HeaderElement codec : codecs) {
-									if (codec.getName()
-											.equalsIgnoreCase("gzip")) {
-										response.setEntity(new GzipDecompressingEntity(
-												response.getEntity()));
-										return;
-									}
-								}
+			@Override
+			public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
+				final HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					final Header ceheader = entity.getContentEncoding();
+					if (ceheader != null) {
+						final HeaderElement[] codecs = ceheader.getElements();
+						for (final HeaderElement codec : codecs) {
+							if (codec.getName().equalsIgnoreCase("gzip")) {
+								response.setEntity(new GzipDecompressingEntity(response.getEntity()));
+								return;
 							}
 						}
 					}
+				}
+			}
 
-				}).build();
+		}).build();
 
 	}
 
@@ -111,13 +101,9 @@ public class WebNavigator {
 		final NetResponse r = new NetResponse();
 
 		final HttpGet httpGet = new HttpGet(uri);
-		httpGet.setHeader("accept-language",
-				"de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4");
-		httpGet.setHeader(
-				"user-agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");
-		httpGet.setHeader("accept",
-				"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		httpGet.setHeader("accept-language", "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4");
+		httpGet.setHeader("user-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");
+		httpGet.setHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 
 		try {
 			final BasicResponseHandler handle = new BasicResponseHandler();
@@ -139,9 +125,7 @@ public class WebNavigator {
 
 	public InputStream navigateStream(final String uri) {
 		final HttpGet httpGet = new HttpGet(uri);
-		httpGet.setHeader(
-				"user-agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");
+		httpGet.setHeader("user-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");
 
 		try {
 			final HttpResponse r = client.execute(httpGet, context);
