@@ -48,6 +48,7 @@ public class StepDownload extends Step {
 					p = p.split("has already been")[0].trim();
 					StepDownload.this.entry.addDownloadTempFile(new File(p));
 				}
+				// System.out.println(line);
 			}
 		});
 		y.run();

@@ -23,7 +23,9 @@ public class CoverPanel extends JPanel {
 
 	public CoverPanel(final BufferedImage img) {
 		this.img = img;
+
 		setPreferredSize(new Dimension(size, size));
+
 	}
 
 	public BufferedImage getImage() {

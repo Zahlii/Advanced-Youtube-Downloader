@@ -25,19 +25,30 @@ import org.jaudiotagger.tag.images.StandardArtwork;
 
 import de.zahlii.youtube.download.QueueEntry;
 
+/**
+ * Wrapper around the jAudioTagger library for easier handling of necessary information in the audio tags.
+ * 
+ * @author Zahlii
+ * 
+ */
 public class TagEditor {
 	private final QueueEntry entry;
 	private final File musicFile;
 	private AudioFile song;
 	private Tag tag;
 
+	/**
+	 * Opens a music(video) file for read/write access on the tag information.
+	 * 
+	 * @param file
+	 * @param entry
+	 */
 	public TagEditor(final File file, final QueueEntry entry) {
 		musicFile = file;
 		this.entry = entry;
 
 		try {
 			song = AudioFileIO.read(musicFile);
-			song.getAudioHeader();
 			tag = song.getTag();
 		} catch (IOException | InvalidAudioFrameException | CannotReadException | TagException | ReadOnlyFileException e) {
 			Logging.log("failed loading audio file", e);
@@ -46,6 +57,9 @@ public class TagEditor {
 		}
 	}
 
+	/**
+	 * Saves all changes done to the tags
+	 */
 	public void commit() {
 		try {
 			AudioFileIO.write(song);
@@ -58,6 +72,11 @@ public class TagEditor {
 		return musicFile;
 	}
 
+	/**
+	 * Construct a BufferedImage out of embedded album art.
+	 * 
+	 * @return
+	 */
 	public BufferedImage readArtwork() {
 		int s;
 		try {
@@ -81,6 +100,12 @@ public class TagEditor {
 		}
 	}
 
+	/**
+	 * Reads a specific field out of the tag information.
+	 * 
+	 * @param f
+	 * @return Information or ""
+	 */
 	public String readField(final FieldKey f) {
 		try {
 			final String s = tag.getFirst(f);

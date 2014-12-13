@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -24,9 +23,8 @@ import javax.swing.JTextField;
 import org.jaudiotagger.tag.FieldKey;
 
 import radams.gracenote.webapi.GracenoteMetadata;
+import de.zahlii.youtube.download.FileDrop;
 import de.zahlii.youtube.download.QueueEntry;
-import de.zahlii.youtube.download.basic.ConfigManager;
-import de.zahlii.youtube.download.basic.ConfigManager.ConfigKey;
 import de.zahlii.youtube.download.basic.Helper;
 import de.zahlii.youtube.download.basic.Logging;
 import de.zahlii.youtube.download.basic.Media;
@@ -40,7 +38,7 @@ public class InfoFrame extends JFrame {
 	private final JTextField album;
 	private final JTextField albumartist;
 	private final JTextField artist;
-	private final JButton btnChoseImage;
+	// private final JButton btnChoseImage;
 	private final JButton btnRestoreArtwork;
 	private final CoverPanel coverPanel;
 	private final JTextField genre;
@@ -333,33 +331,40 @@ public class InfoFrame extends JFrame {
 		gbc_btnNewButton_1.gridy = 10;
 		getContentPane().add(btnNewButton_1, gbc_btnNewButton_1);
 
-		btnChoseImage = new JButton("Change Artwork");
-		btnChoseImage.setIcon(Media.ICON_SEARCH);
-		btnChoseImage.addActionListener(new ActionListener() {
+		new FileDrop(coverPanel, new FileDrop.Listener() {
+			public void filesDropped(java.io.File[] files) {
+				File f = files[0];
+				reloadCoverImage(f);
+			} // end filesDropped
+		}); // end FileDrop.Listener
 
-			@Override
-			public void actionPerformed(final ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser();
-				fc.setDialogTitle("Chose Artwork Image");
-				fc.setApproveButtonText("Set Artwork");
-				final String path = ConfigManager.getInstance().getConfig(ConfigKey.DIR_IMAGES, new File("").getAbsolutePath());
-				fc.setCurrentDirectory(new File(path));
-				fc.setMultiSelectionEnabled(false);
-
-				final int res = fc.showOpenDialog(null);
-				if (res == JFileChooser.APPROVE_OPTION) {
-					final File f = fc.getSelectedFile();
-					ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES, f.getParentFile().getAbsolutePath());
-					InfoFrame.this.reloadCoverImage(f);
-				}
-			}
-
-		});
-		final GridBagConstraints gbc_btnChoseImage = new GridBagConstraints();
-		gbc_btnChoseImage.insets = new Insets(0, 0, 0, 5);
-		gbc_btnChoseImage.gridx = 4;
-		gbc_btnChoseImage.gridy = 10;
-		getContentPane().add(btnChoseImage, gbc_btnChoseImage);
+		// btnChoseImage = new JButton("Change Artwork");
+		// btnChoseImage.setIcon(Media.ICON_SEARCH);
+		// btnChoseImage.addActionListener(new ActionListener() {
+		//
+		// @Override
+		// public void actionPerformed(final ActionEvent arg0) {
+		// final JFileChooser fc = new JFileChooser();
+		// fc.setDialogTitle("Chose Artwork Image");
+		// fc.setApproveButtonText("Set Artwork");
+		// final String path = ConfigManager.getInstance().getConfig(ConfigKey.DIR_IMAGES, new File("").getAbsolutePath());
+		// fc.setCurrentDirectory(new File(path));
+		// fc.setMultiSelectionEnabled(false);
+		//
+		// final int res = fc.showOpenDialog(null);
+		// if (res == JFileChooser.APPROVE_OPTION) {
+		// final File f = fc.getSelectedFile();
+		// ConfigManager.getInstance().setConfig(ConfigKey.DIR_IMAGES, f.getParentFile().getAbsolutePath());
+		// InfoFrame.this.reloadCoverImage(f);
+		// }
+		// }
+		//
+		// });
+		// final GridBagConstraints gbc_btnChoseImage = new GridBagConstraints();
+		// gbc_btnChoseImage.insets = new Insets(0, 0, 0, 5);
+		// gbc_btnChoseImage.gridx = 4;
+		// gbc_btnChoseImage.gridy = 10;
+		// getContentPane().add(btnChoseImage, gbc_btnChoseImage);
 	}
 
 	public void addActionListener(final ActionListener a) {

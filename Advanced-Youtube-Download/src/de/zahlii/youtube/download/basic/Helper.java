@@ -11,7 +11,19 @@ import javax.imageio.ImageIO;
 
 import de.zahlii.youtube.download.basic.net.WebNavigator;
 
+/**
+ * Some basic support functions.
+ * 
+ * @author Zahlii
+ * 
+ */
 public class Helper {
+	/**
+	 * Downloads an image from the Web, using WebNavigator
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public static BufferedImage downloadImage(final String url) {
 		final InputStream iSReader = WebNavigator.getInstance().navigateStream(url);
 		try {
@@ -22,6 +34,12 @@ public class Helper {
 		}
 	}
 
+	/**
+	 * Might be used for construction of temp files.
+	 * 
+	 * @param webURL
+	 * @return
+	 */
 	public static String getFileID(final String webURL) {
 		try {
 			final byte[] bytesOfMessage = webURL.getBytes("UTF-8");
@@ -35,6 +53,12 @@ public class Helper {
 		}
 	}
 
+	/**
+	 * Removes all chars not accepted by the file system naming scheme.
+	 * 
+	 * @param main
+	 * @return
+	 */
 	public static String sanitize(final String main) {
 		return main.replace("<", "").replace(">", "").replace(":", "").replace("/", "").replace("\\", "").replace("|", "").replace("?", "").replace("*", "").replace("\"", "").replace("\r", "")
 				.replace("\n", "");

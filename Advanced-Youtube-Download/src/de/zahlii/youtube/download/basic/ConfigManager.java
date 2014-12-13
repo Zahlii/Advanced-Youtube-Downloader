@@ -16,6 +16,12 @@ import java.util.Map.Entry;
  * 
  */
 public class ConfigManager {
+	/**
+	 * Every Config entry needs an associated ConfigKey, which is used to store the information in a file, and to make sure there is no unrecognized option.
+	 * 
+	 * @author Zahlii
+	 * 
+	 */
 	public enum ConfigKey {
 		AUDIO_BITRATE, DIR_IMAGES, DIR_TARGET, FILENAME_CONVENTION, IMPROVE_CONVERT, IS_DEFAULT, KEEP_VIDEO, VOLUME_METHOD
 	}

@@ -30,6 +30,12 @@ import org.apache.http.protocol.HttpContext;
 
 import de.zahlii.youtube.download.basic.Logging;
 
+/**
+ * This class is used to download information from a website.
+ * 
+ * @author Zahlii
+ * 
+ */
 public class WebNavigator {
 	public static final String IP = "79.219.97.90";
 
@@ -48,6 +54,9 @@ public class WebNavigator {
 	private CookieStore cookie;
 	private URIBuilder host;
 
+	/**
+	 * Sets up the WebNavigator, using a cookie store as well as GZIP compression, sets the default headers.
+	 */
 	private WebNavigator() {
 		final RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
 
@@ -97,6 +106,12 @@ public class WebNavigator {
 		return host;
 	}
 
+	/**
+	 * Navigates to a website and returns an NetResponse object to read the contents.
+	 * 
+	 * @param uri
+	 * @return
+	 */
 	public NetResponse navigate(final URI uri) {
 		final NetResponse r = new NetResponse();
 
@@ -123,6 +138,12 @@ public class WebNavigator {
 		return r;
 	}
 
+	/**
+	 * Navigates to a website and returns an InputStream to read the contents.
+	 * 
+	 * @param uri
+	 * @return
+	 */
 	public InputStream navigateStream(final String uri) {
 		final HttpGet httpGet = new HttpGet(uri);
 		httpGet.setHeader("user-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36");

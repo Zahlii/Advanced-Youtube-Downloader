@@ -1,9 +1,5 @@
 package de.zahlii.youtube.download.basic;
 
-/**
- * created: 22.02.2014
- */
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,7 +11,7 @@ import java.util.Date;
 /**
  * logging functions
  * 
- * @author jfruehau
+ * @author Zahlii
  * 
  */
 public class Logging {
@@ -26,7 +22,7 @@ public class Logging {
 	 * 
 	 * return the current path
 	 * 
-	 * @author jfruehau, dcampane
+	 * @author Zahlii
 	 * 
 	 * @return
 	 */
@@ -52,7 +48,7 @@ public class Logging {
 	 * 
 	 * logs a message with it's timestamp
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @param message
 	 *            message string
@@ -74,7 +70,7 @@ public class Logging {
 	 * 
 	 * logs a message and an exception
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @param message
 	 *            message string
@@ -101,7 +97,7 @@ public class Logging {
 	 * 
 	 * logs a message with a given amount of tabs at the beginning
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @param message
 	 * @param level
@@ -122,7 +118,7 @@ public class Logging {
 	 * 
 	 * log into a file
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @param file
 	 * @param e
@@ -141,7 +137,7 @@ public class Logging {
 	 * 
 	 * log into a file
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @param file
 	 * @param text
@@ -160,7 +156,7 @@ public class Logging {
 	 * 
 	 * get the formatted time
 	 * 
-	 * @author jfruehau
+	 * @author Zahlii
 	 * 
 	 * @return a timestamp
 	 */

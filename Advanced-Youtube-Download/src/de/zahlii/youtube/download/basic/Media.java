@@ -10,6 +10,12 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+/**
+ * Stores all associated Media files such as icons as well as convenience methods for them.
+ * 
+ * @author Zahlii
+ * 
+ */
 public class Media {
 	public static final ImageIcon ICON_ADD = getImageIcon("icon_add.png");
 	public static final ImageIcon ICON_CANCEL = getImageIcon("icon_cross.png");
@@ -40,6 +46,12 @@ public class Media {
 		return resizedImg;
 	}
 
+	/**
+	 * Reads an ImageIcon. Also works from within a .jar file or similar.
+	 * 
+	 * @param imageName
+	 * @return
+	 */
 	private static ImageIcon getImageIcon(final String imageName) {
 		final InputStream imagePathName = tryGet(imageName);
 		try {
@@ -52,6 +64,12 @@ public class Media {
 		return null;
 	}
 
+	/**
+	 * Constructs an InputStream of a ressource, be it on the file system or within a .jar
+	 * 
+	 * @param path
+	 * @return
+	 */
 	private static InputStream tryGet(final String path) {
 		final InputStream img = Media.class.getResourceAsStream("/" + path);
 		if (img == null) {

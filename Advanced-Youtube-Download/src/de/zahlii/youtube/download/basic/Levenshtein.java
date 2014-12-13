@@ -1,5 +1,12 @@
 package de.zahlii.youtube.download.basic;
 
+/**
+ * Implementation of the Levenshtein algorithm using @link http://rosettacode.org/wiki/Levenshtein_distance#Java Is used during the Gracenote Meta Search to assure that the song we searched for gets
+ * matched the best
+ * 
+ * @author Zahlii
+ * 
+ */
 public class Levenshtein {
 
 	public static int distance(String a, String b) {

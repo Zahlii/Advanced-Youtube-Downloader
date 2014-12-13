@@ -43,6 +43,7 @@ public class StepReplayGain extends Step {
 
 	@Override
 	public void doStep() {
+
 		final ProcessBuilder n = new ProcessBuilder();
 
 		final File f = entry.getFinalMP3File();
@@ -79,6 +80,7 @@ public class StepReplayGain extends Step {
 			entry.getStepInfo().put("volume.mp3gain", g.getVolume());
 		}
 		nextStep();
+
 	}
 
 	@Override

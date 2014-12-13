@@ -1,8 +1,3 @@
-/**
- * TODO INSERT CLASS DESCRIPTION
- * 
- * @author jfruehau
- */
 package de.zahlii.youtube.download.basic.net;
 
 import java.io.BufferedInputStream;
@@ -17,13 +12,24 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 
 /**
- * TODO INSERT CLASS DESCRIPTION
+ * This class is used to download information from a website and easily extracting information out of it.
  * 
- * @author jfruehau
+ * @author Zahlii
  * 
  */
 public class NetResponse {
 
+	/**
+	 * Extracts the data between two strings
+	 * 
+	 * @param target
+	 *            String containing the info to be extracted.
+	 * @param string
+	 *            String at the start of the extraction.
+	 * @param string2
+	 *            String at the end of the extraction.
+	 * @return The first part between the first occurences of the start and end string, or "" if not found.
+	 */
 	public static String extract(final String target, final String string, final String string2) {
 		final int pos = target.indexOf(string);
 		if (pos == -1)
@@ -37,13 +43,15 @@ public class NetResponse {
 	}
 
 	/**
-	 * TODO ADD METHOD DESCRIPTION
-	 * 
-	 * @author jfruehau
+	 * Extracts the data using RegEx
 	 * 
 	 * @param data
+	 *            String containing the info to be extracted.
 	 * @param string
-	 * @return
+	 *            RegEx string which should be applied.
+	 * @param dotall
+	 *            Whether the RegEx-option DOTALL shall be used.
+	 * @return A list of matches. For each match, all groups will be captured, so for one subgroup and two matches there will be four entries in the results.
 	 */
 	public static List<String> rextract(final String data, final String string, final boolean dotall) {
 		final Pattern p = dotall ? Pattern.compile(string, Pattern.DOTALL) : Pattern.compile(string);
@@ -70,6 +78,15 @@ public class NetResponse {
 
 	public String responseType;
 
+	/**
+	 * Convenience method to use on a NetResponse object
+	 * 
+	 * @param s1
+	 *            Start seperator
+	 * @param s2
+	 *            End seperator
+	 * @return Part in between start and end or ""
+	 */
 	public String extract(final String s1, final String s2) {
 		return extract(responseBody, s1, s2);
 	}
