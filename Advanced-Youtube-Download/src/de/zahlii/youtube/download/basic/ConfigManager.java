@@ -10,14 +10,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * This class is used for storing and retrieving the Config entries. Every entry is associated with exactly one ConfigKey.
+ * This class is used for storing and retrieving the Config entries. Every entry
+ * is associated with exactly one ConfigKey.
  * 
  * @author Zahlii
  * 
  */
 public class ConfigManager {
 	/**
-	 * Every Config entry needs an associated ConfigKey, which is used to store the information in a file, and to make sure there is no unrecognized option.
+	 * Every Config entry needs an associated ConfigKey, which is used to store
+	 * the information in a file, and to make sure there is no unrecognized
+	 * option.
 	 * 
 	 * @author Zahlii
 	 * 
@@ -55,7 +58,8 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get a config entry or the default value. Please note: When the entry does not exist, it will be saved to the default value in the config file.
+	 * Get a config entry or the default value. Please note: When the entry does
+	 * not exist, it will be saved to the default value in the config file.
 	 * 
 	 * @param key
 	 *            the ConfigKey to get
@@ -94,6 +98,9 @@ public class ConfigManager {
 				configFile.createNewFile();
 			}
 
+			if (!TEMP_DIR.exists())
+				TEMP_DIR.createNewFile();
+
 			final byte[] encoded = Files.readAllBytes(Paths.get(configFile.toURI()));
 			final String[] lines = new String(encoded, encoding).split("\n");
 			for (final String line : lines) {
@@ -101,7 +108,8 @@ public class ConfigManager {
 				if (parts.length < 2) {
 					continue;
 				}
-				config.put(ConfigKey.valueOf(parts[0]), parts[1].replace("\r", "").replace("\n", ""));
+				config.put(ConfigKey.valueOf(parts[0]), parts[1].replace("\r", "")
+						.replace("\n", ""));
 			}
 		} catch (final IOException e) {
 			Logging.log("failed loading config file", e);

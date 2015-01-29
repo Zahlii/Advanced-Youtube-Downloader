@@ -73,8 +73,12 @@ public class DownloadFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final GridBagLayout gbc_main = new GridBagLayout();
-		gbc_main.columnWidths = new int[] { 10, 100, 200, 200, 100, 10 };
-		gbc_main.rowHeights = new int[] { 10, 30, 30, 30, 30, 30, 30, 100, 10 };
+		gbc_main.columnWidths = new int[] {
+				10, 100, 200, 200, 100, 10
+		};
+		gbc_main.rowHeights = new int[] {
+				10, 30, 30, 30, 30, 30, 30, 100, 10
+		};
 
 		settings = new SettingsFrame();
 
@@ -140,7 +144,9 @@ public class DownloadFrame extends JFrame {
 			@Override
 			public void onEntryBegin(final QueueEntry entry) {
 				DownloadFrame.this.setStage(Stage.WORKING);
-				DownloadFrame.this.text(lblCurrentStep, entry.isDownloadTask() ? "Waiting for download to start..." : "Waiting for audio filter to start...");
+				DownloadFrame.this.text(lblCurrentStep,
+						entry.isDownloadTask() ? "Waiting for download to start..."
+								: "Waiting for audio filter to start...");
 				if (entry.isDownloadTask()) {
 					DownloadFrame.this.text(lblLastStep, "<html>");
 				}
@@ -165,19 +171,25 @@ public class DownloadFrame extends JFrame {
 
 			@Override
 			public void onEntryStepBegin(final QueueEntry entry, final Step step) {
-				DownloadFrame.this.text(lblCurrentStep, "Running Step\"" + step.getStepDescriptor().getStepName() + "\"...");
+				DownloadFrame.this.text(lblCurrentStep, "Running Step\""
+						+ step.getStepDescriptor().getStepName() + "\"...");
 				DownloadFrame.this.stepProgress(0);
 			}
 
 			@Override
-			public void onEntryStepEnd(final QueueEntry entry, final Step step, final long t, final double progress) {
+			public void onEntryStepEnd(final QueueEntry entry, final Step step, final long t,
+					final double progress) {
 				DownloadFrame.this.stepProgress(1);
 				DownloadFrame.this.overallProgress(progress);
-				DownloadFrame.this.textNL(lblLastStep, "Step \"" + step.getStepDescriptor().getStepName() + "\" finished: " + step.getStepResults());
+				DownloadFrame.this.textNL(
+						lblLastStep,
+						"Step \"" + step.getStepDescriptor().getStepName() + "\" finished: "
+								+ step.getStepResults());
 			}
 
 			@Override
-			public void onEntryStepProgress(final QueueEntry entry, final Step step, final double progress) {
+			public void onEntryStepProgress(final QueueEntry entry, final Step step,
+					final double progress) {
 				DownloadFrame.this.stepProgress(progress);
 
 			}
@@ -319,18 +331,18 @@ public class DownloadFrame extends JFrame {
 
 	private void setStage(final Stage s) {
 		switch (s) {
-			case IDLE:
-				downloadLinkInput.setEnabled(true);
-				stepProgress(0);
-				overallProgress(0);
-				queueProgress(0);
-				break;
-			case WORKING:
-				startDownloadBtn.setEnabled(false);
-				downloadLinkInput.setEnabled(false);
-				break;
-			default:
-				break;
+		case IDLE:
+			downloadLinkInput.setEnabled(true);
+			stepProgress(0);
+			overallProgress(0);
+			queueProgress(0);
+			break;
+		case WORKING:
+			startDownloadBtn.setEnabled(false);
+			downloadLinkInput.setEnabled(false);
+			break;
+		default:
+			break;
 
 		}
 	}
@@ -375,6 +387,9 @@ public class DownloadFrame extends JFrame {
 
 	protected void cleanUp() {
 		final File[] f = ConfigManager.TEMP_DIR.listFiles();
+		if (f == null)
+			return;
+
 		for (final File ftodelete : f) {
 			FileUtils.deleteQuietly(ftodelete);
 		}
