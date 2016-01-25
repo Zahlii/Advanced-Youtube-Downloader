@@ -10,13 +10,17 @@ import de.zahlii.youtube.download.cli.ProcessAdapter;
 public class StepDownload extends Step {
 
 	public StepDownload(final QueueEntry entry) {
-		super(entry, new StepDescriptor("FileDownload", "Using yt-download.exe to extract the highest quality video available for this link"));
+		super(
+				entry,
+				new StepDescriptor("FileDownload",
+						"Using yt-download.exe to extract the highest quality video available for this link"));
 	}
 
 	@Override
 	public void doStep() {
-		final ProcessBuilder n = new ProcessBuilder(ConfigManager.YOUTUBE_DL.getAbsolutePath(), "-o", ConfigManager.TEMP_DIR.getAbsolutePath() + ConfigManager.DS + "%(title)s.%(ext)s",
-				entry.getWebURL());
+		final ProcessBuilder n = new ProcessBuilder(ConfigManager.YOUTUBE_DL.getAbsolutePath(),
+				"-o", ConfigManager.TEMP_DIR.getAbsolutePath() + ConfigManager.DS
+						+ "%(title)s.%(ext)s", entry.getWebURL());
 
 		final CLI y = new CLI(n);
 		y.addProcessListener(new ProcessAdapter() {
@@ -39,8 +43,12 @@ public class StepDownload extends Step {
 					current = Integer.parseInt(p[0]);
 					total = Integer.parseInt(p[1]);
 				}
-				if (line.contains("[download]") && line.contains("Destination:")) {
-					final String p = line.split("Destination:")[1].trim();
+				// Merging formats into
+				// "C:\Users\Nik\git\Advanced-Youtube-Downloader\Advanced-Youtube-Download\temp\Jimi
+				// Hendrix Purple Haze.mp4"
+				if (line.contains("[ffmpeg]") && line.contains("Merging")) {
+					String p = line.split("formats into \"")[1].trim();
+					p = p.replaceAll("\"", "");
 					StepDownload.this.entry.addDownloadTempFile(new File(p));
 				}
 				if (line.contains("[download]") && line.contains("has already been")) {

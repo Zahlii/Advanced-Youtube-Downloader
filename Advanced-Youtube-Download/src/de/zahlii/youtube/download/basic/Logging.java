@@ -27,7 +27,8 @@ public class Logging {
 	 * @return
 	 */
 	public static String getPathName() {
-		File f = new File(Logging.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		File f = new File(Logging.class.getProtectionDomain().getCodeSource().getLocation()
+				.getPath());
 
 		final String sep = System.getProperty("file.separator");
 
@@ -59,10 +60,11 @@ public class Logging {
 		final String cls = s.getClassName();
 		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")", 35);
+		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
+				+ ")", 35);
 
 		final String msg = getTimeStamp() + " - [@ " + red + "] " + message;
-		System.err.println(msg);
+		System.out.println(msg);
 		appendString("log.txt", msg);
 	}
 
@@ -83,8 +85,10 @@ public class Logging {
 		final String cls = s.getClassName();
 		final String shortCls = cls.substring(cls.lastIndexOf(".") + 1, cls.length());
 
-		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber() + ")", 35);
-		log(message + "[ " + e.getClass().getSimpleName() + " - " + e.getMessage() + " ] from " + red);
+		final String red = padRight(shortCls + "." + s.getMethodName() + "(" + s.getLineNumber()
+				+ ")", 35);
+		log(message + "[ " + e.getClass().getSimpleName() + " - " + e.getMessage() + " ] from "
+				+ red);
 
 		if (!printStackTrace)
 			return;

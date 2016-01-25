@@ -22,7 +22,8 @@ import de.zahlii.youtube.download.step.StepSilenceDetect;
 import de.zahlii.youtube.download.step.StepVolumeAdjust;
 
 /**
- * Represents one entry in the queue. This could either be a downloading action or a converting/improving action of an existing file.
+ * Represents one entry in the queue. This could either be a downloading action
+ * or a converting/improving action of an existing file.
  * 
  * @author Zahlii
  * 
@@ -71,12 +72,14 @@ public class QueueEntry extends Thread {
 
 		downloadTempFile = file;
 		isDownloadTask = false;
-		if (Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.IMPROVE_CONVERT, "true"))) {
+		if (Boolean.valueOf(ConfigManager.getInstance()
+				.getConfig(ConfigKey.IMPROVE_CONVERT, "true"))) {
 			if (QueueEntry.enableSilence) {
 				stepsToComplete.add(new StepSilenceDetect(this));
 			}
 			if (QueueEntry.enableVolume) {
-				if (ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("Peak Normalize")) {
+				if (ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+						.equals("Peak Normalize")) {
 					stepsToComplete.add(new StepVolumeAdjust(this));
 				}
 			}
@@ -92,7 +95,8 @@ public class QueueEntry extends Thread {
 			stepsToComplete.add(new StepRelocate(this));
 
 			if (QueueEntry.enableVolume) {
-				if (ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain").equals("ReplayGain")) {
+				if (ConfigManager.getInstance().getConfig(ConfigKey.VOLUME_METHOD, "ReplayGain")
+						.equals("ReplayGain")) {
 					stepsToComplete.add(new StepReplayGain(this));
 				}
 			}
@@ -100,10 +104,13 @@ public class QueueEntry extends Thread {
 	}
 
 	/**
-	 * Creates a downloading entry which is only responsible for downloading the video into a file. After the download is finished, it creates a new convert/improve-entry for the newly created file.
+	 * Creates a downloading entry which is only responsible for downloading the
+	 * video into a file. After the download is finished, it creates a new
+	 * convert/improve-entry for the newly created file.
 	 * 
 	 * @param webURL
-	 *            HTTP URL which contains the video (will be directly passed to youtube-dl.exe)
+	 *            HTTP URL which contains the video (will be directly passed to
+	 *            youtube-dl.exe)
 	 */
 	public QueueEntry(final String webURL) {
 		this.webURL = webURL;
@@ -113,6 +120,7 @@ public class QueueEntry extends Thread {
 	public void addDownloadTempFile(final File file) {
 		downloadTempFile = file;
 		final QueueEntry q = new QueueEntry(file);
+		Logging.log("Download Temp File set to: " + file.getAbsolutePath());
 		Queue.getInstance().addEntry(q);
 	}
 
@@ -160,11 +168,14 @@ public class QueueEntry extends Thread {
 	}
 
 	public boolean isFLAC() {
-		return ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE, "320").equals("FLAC Lossless");
+		return ConfigManager.getInstance().getConfig(ConfigKey.AUDIO_BITRATE, "320")
+				.equals("FLAC Lossless");
 	}
 
 	/**
-	 * Starts the next Step. Executes the listeners when needed. Also, measures the time needed for each Step in ms. Keeps track of the last Step started and executes the onEntryStepEnd if necessary.
+	 * Starts the next Step. Executes the listeners when needed. Also, measures
+	 * the time needed for each Step in ms. Keeps track of the last Step started
+	 * and executes the onEntryStepEnd if necessary.
 	 */
 	public void nextStep() {
 		// handle timing and onEntryStepEnd
@@ -235,12 +246,15 @@ public class QueueEntry extends Thread {
 	}
 
 	/**
-	 * Deletes all temporary files after every step has finished. This depends on the setting ConfigKey.KEEP_VIDEO. A downloading entry won't delete the final file, this might only be done by a
-	 * converting entry after the last step has finished.
+	 * Deletes all temporary files after every step has finished. This depends
+	 * on the setting ConfigKey.KEEP_VIDEO. A downloading entry won't delete the
+	 * final file, this might only be done by a converting entry after the last
+	 * step has finished.
 	 */
 	private void cleanUp() {
 		if (!isDownloadTask()) {
-			if (Boolean.valueOf(ConfigManager.getInstance().getConfig(ConfigKey.KEEP_VIDEO, "false"))) {
+			if (Boolean.valueOf(ConfigManager.getInstance()
+					.getConfig(ConfigKey.KEEP_VIDEO, "false"))) {
 				try {
 					FileUtils.moveFile(getDownloadTempFile(), getDownloadFinalFile());
 				} catch (final IOException e) {
@@ -258,6 +272,8 @@ public class QueueEntry extends Thread {
 	 */
 	private File getDownloadFinalFile() {
 		final String n = getDownloadTempFile().getName();
-		return new File(ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET, new File("").getAbsolutePath()) + ConfigManager.DS + n);
+		return new File(ConfigManager.getInstance().getConfig(ConfigKey.DIR_TARGET,
+				new File("").getAbsolutePath())
+				+ ConfigManager.DS + n);
 	}
 }

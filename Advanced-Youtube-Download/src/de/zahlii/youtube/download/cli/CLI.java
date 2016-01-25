@@ -71,7 +71,7 @@ public class CLI {
 		String line;
 
 		if ((line = in.readLine()) != null) {
-			// Logging.log("[CLI]\t" + line);
+			Logging.log("[CLI]\t" + line);
 			for (final ProcessListener l : listener) {
 				l.processLineOut(line);
 			}
